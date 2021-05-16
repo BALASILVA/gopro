@@ -3,165 +3,212 @@ package com.gopro.bene;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class User implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, updatable = false)
-    private Long id;
-    private String userId;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String password;
-    private String email;
-    private String profileImageUrl;
-    private Date lastLoginDate;
-    private Date lastLoginDateDisplay;
-    private Date joinDate;
-    private String role; //ROLE_USER{ read, edit }, ROLE_ADMIN {delete}
-    private String[] authorities;
-    private boolean isActive;
-    private boolean isNotLocked;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
+	@SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq")
+	@Column(nullable = false, updatable = false)
+	private Long Id;
 
-    public User(){}
+	private String userId;
+	
+	private String firstName;
+	private String lastName;
+	private String username;
+	private String password;
+	@Column(nullable = false, unique = true)
+	private String email;
+	private Long parentUserId;
+	@ManyToMany(cascade = { CascadeType.ALL })
+	@JoinColumn(name = "shopId")
+	private List<Shop> shopList;
+	private String profileImageUrl;
+	private Date lastLoginDate;
+	private Date lastLoginDateDisplay;
+	private Date joinDate;
+	private String role; // ROLE_USER{ read, edit }, ROLE_ADMIN {delete}
+	private String[] authorities;
+	private boolean isActive;
+	private boolean isNotLocked;
 
-    public User(Long id, String userId, String firstName, String lastName, String username, String password, String email, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role, String[] authorities, boolean isActive, boolean isNotLocked) {
-        this.id = id;
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.profileImageUrl = profileImageUrl;
-        this.lastLoginDate = lastLoginDate;
-        this.lastLoginDateDisplay = lastLoginDateDisplay;
-        this.joinDate = joinDate;
-        this.role = role;
-        this.authorities = authorities;
-        this.isActive = isActive;
-        this.isNotLocked = isNotLocked;
-    }
+	@OneToOne
+	@JoinColumn(name = "roleId")
+	private Role roleObject;
 
-    public Long getId() {
-        return id;
-    }
+	public User() {
+		// TODO Auto-generated constructor stub
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public User(Long id, String userId, String firstName, String lastName, String username, String password,
+			String email, Long parentUserId, List<Shop> shopList, String profileImageUrl, Date lastLoginDate,
+			Date lastLoginDateDisplay, Date joinDate, String role, String[] authorities, boolean isActive,
+			boolean isNotLocked, Role roleObject) {
+		super();
+		Id = id;
+		this.userId = userId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.password = password;
+		this.email = email;
+		this.parentUserId = parentUserId;
+		this.shopList = shopList;
+		this.profileImageUrl = profileImageUrl;
+		this.lastLoginDate = lastLoginDate;
+		this.lastLoginDateDisplay = lastLoginDateDisplay;
+		this.joinDate = joinDate;
+		this.role = role;
+		this.authorities = authorities;
+		this.isActive = isActive;
+		this.isNotLocked = isNotLocked;
+		this.roleObject = roleObject;
+	}
 
-    public String getUserId() {
-        return userId;
-    }
+	public Long getId() {
+		return Id;
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public void setId(Long id) {
+		Id = id;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public Date getLastLoginDate() {
-        return lastLoginDate;
-    }
+	public Long getParentUserId() {
+		return parentUserId;
+	}
 
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-    }
+	public void setParentUserId(Long parentUserId) {
+		this.parentUserId = parentUserId;
+	}
 
-    public Date getLastLoginDateDisplay() {
-        return lastLoginDateDisplay;
-    }
+	public List<Shop> getShopList() {
+		return shopList;
+	}
 
-    public void setLastLoginDateDisplay(Date lastLoginDateDisplay) {
-        this.lastLoginDateDisplay = lastLoginDateDisplay;
-    }
+	public void setShopList(List<Shop> shopList) {
+		this.shopList = shopList;
+	}
 
-    public Date getJoinDate() {
-        return joinDate;
-    }
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
 
-    public void setJoinDate(Date joinDate) {
-        this.joinDate = joinDate;
-    }
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
 
-    public String getRole() {
-        return role;
-    }
+	public Date getLastLoginDate() {
+		return lastLoginDate;
+	}
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+	public void setLastLoginDate(Date lastLoginDate) {
+		this.lastLoginDate = lastLoginDate;
+	}
 
-    public String[] getAuthorities() {
-        return authorities;
-    }
+	public Date getLastLoginDateDisplay() {
+		return lastLoginDateDisplay;
+	}
 
-    public void setAuthorities(String[] authorities) {
-        this.authorities = authorities;
-    }
+	public void setLastLoginDateDisplay(Date lastLoginDateDisplay) {
+		this.lastLoginDateDisplay = lastLoginDateDisplay;
+	}
 
-    public boolean isActive() {
-        return isActive;
-    }
+	public Date getJoinDate() {
+		return joinDate;
+	}
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
+	}
 
-    public boolean isNotLocked() {
-        return isNotLocked;
-    }
+	public String getRole() {
+		return role;
+	}
 
-    public void setNotLocked(boolean notLocked) {
-        isNotLocked = notLocked;
-    }
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String[] getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(String[] authorities) {
+		this.authorities = authorities;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public boolean isNotLocked() {
+		return isNotLocked;
+	}
+
+	public void setNotLocked(boolean isNotLocked) {
+		this.isNotLocked = isNotLocked;
+	}
+
+	public Role getRoleObject() {
+		return roleObject;
+	}
+
+	public void setRoleObject(Role roleObject) {
+		this.roleObject = roleObject;
+	}
+
 }

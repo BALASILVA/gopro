@@ -50,4 +50,9 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return this.user.isActive();
     }
+
+	@Override
+	public String toString() {
+		return "UserPrincipal [user=" + user + "]";
+	}
 }

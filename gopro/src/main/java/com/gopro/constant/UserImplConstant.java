@@ -6,4 +6,7 @@ public class UserImplConstant {
     public static final String NO_USER_FOUND_BY_USERNAME = "No user found by username: ";
     public static final String FOUND_USER_BY_USERNAME = "Returning found user by username: ";
     public static final String DEFAULT_USER_IMAGE_PATH = "/user/image/profile/temp";
+    
+    public static final Long PARENT_USER_ID_SUPER_ADMIN = (long) 0;
+    public static final int SUPER_ADMIN_ROLE_ID = 1;
 }

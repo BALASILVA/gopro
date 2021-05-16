@@ -1,5 +1,7 @@
 package com.gopro.service;
 
+import com.gopro.bene.Role;
+import com.gopro.bene.Shop;
 import com.gopro.bene.User;
 import com.gopro.bene.UserPrincipal;
 import com.gopro.exception.domain.EmailExistException;
@@ -19,123 +21,133 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
+import static com.gopro.enumeration.Role.ROLE_SUPER_ADMIN;
 import javax.transaction.Transactional;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static com.gopro.constant.UserImplConstant.*;
-import static com.gopro.enumeration.Role.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 @Transactional
 @Qualifier("userDetailsService")
 public class UserServiceImpl implements UserService, UserDetailsService {
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder passwordEncoder;
+	private Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private UserRepository userRepository;
+	private BCryptPasswordEncoder passwordEncoder;
+	private RoleService roleService;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+	@Autowired
+	public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
+			RoleService roleService) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.roleService = roleService;
+	}
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username);
-        if (user == null) {
-            LOGGER.error(NO_USER_FOUND_BY_USERNAME + username);
-            throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
-        } else {
-            user.setLastLoginDateDisplay(user.getLastLoginDate());
-            user.setLastLoginDate(new Date());
-            userRepository.save(user);
-            UserPrincipal userPrincipal = new UserPrincipal(user);
-            LOGGER.info(FOUND_USER_BY_USERNAME + username);
-            return userPrincipal;
-        }
-    }
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = userRepository.findUserByUsername(username);
+		if (user == null) {
+			LOGGER.error(NO_USER_FOUND_BY_USERNAME + username);
+			throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
+		} else {
+			user.setLastLoginDateDisplay(user.getLastLoginDate());
+			user.setLastLoginDate(new Date());
+			userRepository.save(user);
+			System.out.println(user);
+			UserPrincipal userPrincipal = new UserPrincipal(user);
+			System.out.println(userPrincipal);
+			LOGGER.info(FOUND_USER_BY_USERNAME + username);
+			return userPrincipal;
+		}
+	}
 
-    @Override
-    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, UsernameExistException, EmailExistException {
-        validateNewUsernameAndEmail(EMPTY, username, email);
-        User user = new User();
-        user.setUserId(generateUserId());
-        String password = generatePassword();
-        String encodedPassword = encodePassword(password);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setJoinDate(new Date());
-        user.setPassword(encodedPassword);
-        user.setActive(true);
-        user.setNotLocked(true);
-        user.setRole(ROLE_USER.name());
-        user.setAuthorities(ROLE_USER.getAuthorities());
-        user.setProfileImageUrl(getTemporaryProfileImageUrl());
-        userRepository.save(user);
-        LOGGER.info("New user password: " + password);
-        return user;
-    }
+	@Override
+	public User register(String userName,String shopName, String email, String password)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		validateNewUsernameAndEmail(EMPTY, email);
+		User user = new User();
+		Shop shop = new Shop();
+		shop.setShopName(shopName);
+		
+		List<Shop> shopList = new ArrayList<Shop>();
+		shopList.add(shop);
+		user.setShopList(shopList);
+		Role role = roleService.findRoleByRoleId(SUPER_ADMIN_ROLE_ID);
+		user.setRoleObject(role);
+		user.setParentUserId(PARENT_USER_ID_SUPER_ADMIN);
+		String encodedPassword = encodePassword(password);
+		user.setFirstName(userName);
+		user.setEmail(email);
+		//Here we Authendicate by email. In spring security manager have authendicatebyuserName class only
+		//For this purpose we store email in userName column.  
+		//So we no need to write logic for Authendication by email
+		user.setUsername(email);
+		user.setJoinDate(new Date());
+		user.setPassword(encodedPassword);
+		user.setActive(true);
+		user.setNotLocked(true);
+		user.setRole(ROLE_SUPER_ADMIN.name());
+		user.setAuthorities(ROLE_SUPER_ADMIN.getAuthorities());
+		user.setProfileImageUrl(getTemporaryProfileImageUrl());
+		userRepository.save(user);
+		return user;
+	}
 
-    @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
-    }
+	@Override
+	public List<User> getUsers() {
+		return userRepository.findAll();
+	}
 
-    @Override
-    public User findUserByUsername(String username) {
-        return userRepository.findUserByUsername(username);
-    }
+	@Override
+	public User findUserByUsername(String username) {
+		return userRepository.findUserByUsername(username);
+	}
 
-    @Override
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
-    }
+	@Override
+	public User findUserByEmail(String email) {
+		return userRepository.findUserByEmail(email);
+	}
 
-    private String getTemporaryProfileImageUrl() {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH).toUriString();
-    }
+	private String getTemporaryProfileImageUrl() {
+		return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH).toUriString();
+	}
 
-    private String encodePassword(String password) {
-        return passwordEncoder.encode(password);
-    }
+	private String encodePassword(String password) {
+		return passwordEncoder.encode(password);
+	}
 
-    private String generatePassword() {
-        return RandomStringUtils.randomAlphanumeric(10);
-    }
+	private String generatePassword() {
+		return RandomStringUtils.randomAlphanumeric(10);
+	}
 
-    private String generateUserId() {
-        return RandomStringUtils.randomNumeric(10);
-    }
+	private String generateUserId() {
+		return RandomStringUtils.randomNumeric(10);
+	}
 
-    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
-        User userByNewUsername = findUserByUsername(newUsername);
-        User userByNewEmail = findUserByEmail(newEmail);
-        if(StringUtils.isNotBlank(currentUsername)) {
-            User currentUser = findUserByUsername(currentUsername);
-            if(currentUser == null) {
-                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
-            }
-            if(userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
-                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-            }
-            if(userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
-                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-            }
-            return currentUser;
-        } else {
-            if(userByNewUsername != null) {
-                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-            }
-            if(userByNewEmail != null) {
-                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-            }
-            return null;
-        }
-    }
+	private User validateNewUsernameAndEmail(String currentUsername, String newEmail)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		User userByNewEmail = findUserByEmail(newEmail);
+		if (StringUtils.isNotBlank(currentUsername)) {
+			User currentUser = findUserByUsername(currentUsername);
+			if (currentUser == null) {
+				throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+			}
+
+			if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
+				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+			}
+			return currentUser;
+		} else {
+			if (userByNewEmail != null) {
+				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+			}
+			return null;
+		}
+	}
 
 }
