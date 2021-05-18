@@ -2,11 +2,13 @@ package com.gopro.bene;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 public class User implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
 	@SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq")
@@ -14,13 +16,14 @@ public class User implements Serializable {
 	private Long Id;
 
 	private String userId;
-	
+
 	private String firstName;
 	private String lastName;
 	private String username;
 	private String password;
 	@Column(nullable = false, unique = true)
 	private String email;
+	private String phoneNumber;
 	private Long parentUserId;
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "shopId")
@@ -33,7 +36,12 @@ public class User implements Serializable {
 	private String[] authorities;
 	private boolean isActive;
 	private boolean isNotLocked;
-
+	private String addressLine1;
+	private String addressLine2;
+	private String addressLine3;
+	private String state;
+	private String pinCode;
+	private String remarks;
 	@OneToOne
 	@JoinColumn(name = "roleId")
 	private Role roleObject;
@@ -43,9 +51,10 @@ public class User implements Serializable {
 	}
 
 	public User(Long id, String userId, String firstName, String lastName, String username, String password,
-			String email, Long parentUserId, List<Shop> shopList, String profileImageUrl, Date lastLoginDate,
-			Date lastLoginDateDisplay, Date joinDate, String role, String[] authorities, boolean isActive,
-			boolean isNotLocked, Role roleObject) {
+			String email, String phoneNumber, Long parentUserId, List<Shop> shopList, String profileImageUrl,
+			Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role, String[] authorities,
+			boolean isActive, boolean isNotLocked, String addressLine1, String addressLine2, String addressLine3,
+			String state, String pinCode, String remarks, Role roleObject) {
 		super();
 		Id = id;
 		this.userId = userId;
@@ -54,6 +63,7 @@ public class User implements Serializable {
 		this.username = username;
 		this.password = password;
 		this.email = email;
+		this.phoneNumber = phoneNumber;
 		this.parentUserId = parentUserId;
 		this.shopList = shopList;
 		this.profileImageUrl = profileImageUrl;
@@ -64,6 +74,12 @@ public class User implements Serializable {
 		this.authorities = authorities;
 		this.isActive = isActive;
 		this.isNotLocked = isNotLocked;
+		this.addressLine1 = addressLine1;
+		this.addressLine2 = addressLine2;
+		this.addressLine3 = addressLine3;
+		this.state = state;
+		this.pinCode = pinCode;
+		this.remarks = remarks;
 		this.roleObject = roleObject;
 	}
 
@@ -121,6 +137,14 @@ public class User implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public Long getParentUserId() {
@@ -203,12 +227,73 @@ public class User implements Serializable {
 		this.isNotLocked = isNotLocked;
 	}
 
+	public String getAddressLine1() {
+		return addressLine1;
+	}
+
+	public void setAddressLine1(String addressLine1) {
+		this.addressLine1 = addressLine1;
+	}
+
+	public String getAddressLine2() {
+		return addressLine2;
+	}
+
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
+	}
+
+	public String getAddressLine3() {
+		return addressLine3;
+	}
+
+	public void setAddressLine3(String addressLine3) {
+		this.addressLine3 = addressLine3;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getPinCode() {
+		return pinCode;
+	}
+
+	public void setPinCode(String pinCode) {
+		this.pinCode = pinCode;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 	public Role getRoleObject() {
 		return roleObject;
 	}
 
 	public void setRoleObject(Role roleObject) {
 		this.roleObject = roleObject;
+	}
+
+	@Override
+	public String toString() {
+		return "User [Id=" + Id + ", userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", username=" + username + ", password=" + password + ", email=" + email + ", phoneNumber="
+				+ phoneNumber + ", parentUserId=" + parentUserId + ", shopList=" + shopList + ", profileImageUrl="
+				+ profileImageUrl + ", lastLoginDate=" + lastLoginDate + ", lastLoginDateDisplay="
+				+ lastLoginDateDisplay + ", joinDate=" + joinDate + ", role=" + role + ", authorities="
+				+ Arrays.toString(authorities) + ", isActive=" + isActive + ", isNotLocked=" + isNotLocked
+				+ ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2 + ", addressLine3=" + addressLine3
+				+ ", state=" + state + ", pinCode=" + pinCode + ", remarks=" + remarks + ", roleObject=" + roleObject
+				+ "]";
 	}
 
 }

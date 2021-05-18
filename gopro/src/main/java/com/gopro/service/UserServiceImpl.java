@@ -1,5 +1,6 @@
 package com.gopro.service;
 
+import com.gopro.bene.Authority;
 import com.gopro.bene.Role;
 import com.gopro.bene.Shop;
 import com.gopro.bene.User;
@@ -39,13 +40,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private UserRepository userRepository;
 	private BCryptPasswordEncoder passwordEncoder;
 	private RoleService roleService;
+	private ShopService shopService;
+	private AuthorityService authorityService;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-			RoleService roleService) {
+	public UserServiceImpl(AuthorityService authorityService,UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
+			RoleService roleService, ShopService shopService) {
+		this.authorityService = authorityService;
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.roleService = roleService;
+		this.shopService = shopService;
 	}
 
 	@Override
@@ -55,12 +60,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			LOGGER.error(NO_USER_FOUND_BY_USERNAME + username);
 			throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
 		} else {
+			int userRoleId = user.getRoleObject().getRoleId();
+			List<Authority>  userAuthorityList = authorityService.findAuthorityByRoleId(userRoleId);
+			String[] userAuthorityArr = new String[userAuthorityList.size()];
+			for (int i = 0; i < userAuthorityList.size(); i++) {
+				userAuthorityArr[i]=userAuthorityList.get(i).getAuthority();
+			}
+			user.setAuthorities(userAuthorityArr);
+			
 			user.setLastLoginDateDisplay(user.getLastLoginDate());
 			user.setLastLoginDate(new Date());
 			userRepository.save(user);
 			System.out.println(user);
 			UserPrincipal userPrincipal = new UserPrincipal(user);
-			System.out.println(userPrincipal);
 			LOGGER.info(FOUND_USER_BY_USERNAME + username);
 			return userPrincipal;
 		}
@@ -92,11 +104,46 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setActive(true);
 		user.setNotLocked(true);
 		user.setRole(ROLE_SUPER_ADMIN.name());
-		user.setAuthorities(ROLE_SUPER_ADMIN.getAuthorities());
+		//user.setAuthorities(ROLE_SUPER_ADMIN.getAuthorities());
 		user.setProfileImageUrl(getTemporaryProfileImageUrl());
 		userRepository.save(user);
 		return user;
 	}
+
+
+	@Override
+	public User addNewUser(Long parentUserId, String userName, String email, String phoneNumber, String addressLine1,
+			List<Shop> shopList, Role role, String remarks)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		validateNewUsernameAndEmail(EMPTY, email);
+		User user = new User();
+		List<Shop> shopListFromInputId = shopService.findAllShopById(shopList);
+		user.setRoleObject(role);
+		user.setShopList(shopListFromInputId);
+		user.setParentUserId(parentUserId);
+		String pass = generatePassword();
+		String encodedPassword = encodePassword(pass);
+		System.out.println("USerPasswoord"+pass);
+		user.setFirstName(userName);
+		user.setEmail(email);
+		//Here we Authendicate by email. In spring security manager have authendicatebyuserName class only
+		//For this purpose we store email in userName column.  
+		//So we no need to write logic for Authendication by email
+		user.setUsername(email);
+		user.setAddressLine1(addressLine1);
+		user.setJoinDate(new Date());
+		user.setPassword(encodedPassword);
+		user.setActive(true);
+		user.setNotLocked(true);
+		Role roleByRoleId = roleService.getRoleById(role.getRoleId());
+		System.out.println(roleByRoleId);		
+		user.setRole(roleByRoleId.getRoleName());
+		user.setProfileImageUrl(getTemporaryProfileImageUrl());
+		userRepository.save(user);
+		return user;
+	}
+
+
 
 	@Override
 	public List<User> getUsers() {
@@ -149,5 +196,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return null;
 		}
 	}
+
+
 
 }

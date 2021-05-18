@@ -1,5 +1,7 @@
 package com.gopro.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,18 @@ public class RoleServiceImpl implements RoleService {
 		}
 		
 		return role;
+	}
+
+
+	@Override
+	public List<Role> findAllRoleWithOutSuperAdmin() {
+		return roleRepository.findAll();
+	}
+
+
+	@Override
+	public Role getRoleById(int roleId) {
+		return roleRepository.findRoleByRoleId(roleId);
 	}
 
 }
