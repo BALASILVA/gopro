@@ -3,6 +3,7 @@ package com.gopro.controller;
 import com.gopro.bene.User;
 import com.gopro.bene.UserPrincipal;
 import com.gopro.bene.Authority;
+import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.exception.ExceptionHandling;
 import com.gopro.exception.domain.EmailExistException;
 import com.gopro.exception.domain.UserNotFoundException;
@@ -12,6 +13,7 @@ import com.gopro.service.UserService;
 import com.gopro.utility.JWTTokenProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -63,6 +65,8 @@ public class UserController extends ExceptionHandling {
 		
 		//User loginUser = userService.findUserByEmail(user.getEmail());
 		UserPrincipal userPrincipal = new UserPrincipal(loginUser);
+		
+		userPrincipal.setUser(loginUser);
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 		return new ResponseEntity<>(loginUser, jwtHeader, OK);
 	}
@@ -77,9 +81,29 @@ public class UserController extends ExceptionHandling {
 	@PostMapping("/add")
 	public ResponseEntity<User> addNewUser(@RequestBody User user)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		User newUser = userService.addNewUser(user.getParentUserId(),user.getUsername(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
+		User newUser = userService.addNewUser(user.getParentUserId(),user.getFirstName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
 		return new ResponseEntity<>(newUser, OK);
 	}
+	
+	@PostMapping("/update")
+	public ResponseEntity<User> updateUser(@RequestBody User user)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		System.out.println(user.getRemarks());
+		User updatedUser = userService.updateUser(user.getId(),user.getFirstName(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
+		
+		return new ResponseEntity<>(updatedUser, OK);
+	}
+	
+	
+	@PostMapping
+	public ResponseEntity<Page<User>> getAllUser(@RequestBody SearchCredentialDTO searchCredentialDTO)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		Page<User> userList = userService.getAllUserPaginationAndSorting(searchCredentialDTO);
+		return new ResponseEntity<>(userList, OK);
+	}	
+	
+	
+	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(user));

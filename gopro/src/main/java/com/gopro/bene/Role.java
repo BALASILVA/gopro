@@ -14,12 +14,18 @@ import javax.persistence.ManyToMany;
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false,name="roleid")
 	private int roleId;
+	
+	@Column(name="rolename")	
 	private String roleName;
+	
+	@Column(name="isactive")
 	private String isActive;
+	
 	@ManyToMany
-	@JoinColumn(name = "menuId")
+	@JoinColumn(name = "menuid")
+	@Column(name="menulist")
 	private List<Menu> menuList;
 
 	public Role() {

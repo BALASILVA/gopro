@@ -30,4 +30,14 @@ public class ShopServiceImpl implements ShopService {
 		return retunList;
 	}
 
+	@Override
+	public List<Shop> getAllShopByParentUserId(Long id) {
+		return shopRepository.getAllShopByParentUserId(id);
+	}
+
+	@Override
+	public Shop save(Shop shop) {
+		return shopRepository.save(shop);
+	}
+
 }

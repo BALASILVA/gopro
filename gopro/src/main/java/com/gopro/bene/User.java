@@ -12,38 +12,82 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
 	@SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq")
-	@Column(nullable = false, updatable = false)
+	@Column(name="id" ,nullable = false, updatable = false)
 	private Long Id;
-
+	
+	@Column(name = "userid")
 	private String userId;
-
+	
+	@Column(name = "firstname")
 	private String firstName;
+	
+	@Column(name = "lastname")
 	private String lastName;
+	
+	@Column(name = "username")
 	private String username;
+	
+	@Column(name = "password")
 	private String password;
-	@Column(nullable = false, unique = true)
+	
+	@Column(name="email", nullable = false, unique = true)
 	private String email;
+	
+	@Column(name = "phonenumber")
 	private String phoneNumber;
+	
+	@Column(name = "parentuserid")
 	private Long parentUserId;
+	
 	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "shopId")
+	@JoinColumn(name = "shopid")
+	@Column(name = "shoplist")
 	private List<Shop> shopList;
+	
+	@Column(name = "defaultshopid")
+	private Long defaultShopId;
+	
+	@Column(name = "profileimageurl")
 	private String profileImageUrl;
+	
+	@Column(name = "lastlogindate")
 	private Date lastLoginDate;
+	
+	@Column(name = "lastlogindatedisplay")
 	private Date lastLoginDateDisplay;
+
+	@Column(name = "joindate")
 	private Date joinDate;
+
 	private String role; // ROLE_USER{ read, edit }, ROLE_ADMIN {delete}
 	private String[] authorities;
+	
+	@Column(name = "isactive")
 	private boolean isActive;
+	
+	@Column(name = "isnotlocked")
 	private boolean isNotLocked;
+	
+	@Column(name = "addressline1")
 	private String addressLine1;
+	
+	@Column(name = "addressline2")
 	private String addressLine2;
+	
+	@Column(name = "addressline3")
 	private String addressLine3;
+	
+	@Column(name = "state")
 	private String state;
+	
+	@Column(name = "pincode")
 	private String pinCode;
+	
+	@Column(name = "remarks")
 	private String remarks;
+	
 	@OneToOne
-	@JoinColumn(name = "roleId")
+	@JoinColumn(name = "roleid")
 	private Role roleObject;
 
 	public User() {
@@ -51,10 +95,10 @@ public class User implements Serializable {
 	}
 
 	public User(Long id, String userId, String firstName, String lastName, String username, String password,
-			String email, String phoneNumber, Long parentUserId, List<Shop> shopList, String profileImageUrl,
-			Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role, String[] authorities,
-			boolean isActive, boolean isNotLocked, String addressLine1, String addressLine2, String addressLine3,
-			String state, String pinCode, String remarks, Role roleObject) {
+			String email, String phoneNumber, Long parentUserId, List<Shop> shopList, Long defaultShopId,
+			String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role,
+			String[] authorities, boolean isActive, boolean isNotLocked, String addressLine1, String addressLine2,
+			String addressLine3, String state, String pinCode, String remarks, Role roleObject) {
 		super();
 		Id = id;
 		this.userId = userId;
@@ -66,6 +110,7 @@ public class User implements Serializable {
 		this.phoneNumber = phoneNumber;
 		this.parentUserId = parentUserId;
 		this.shopList = shopList;
+		this.defaultShopId = defaultShopId;
 		this.profileImageUrl = profileImageUrl;
 		this.lastLoginDate = lastLoginDate;
 		this.lastLoginDateDisplay = lastLoginDateDisplay;
@@ -161,6 +206,14 @@ public class User implements Serializable {
 
 	public void setShopList(List<Shop> shopList) {
 		this.shopList = shopList;
+	}
+
+	public Long getDefaultShopId() {
+		return defaultShopId;
+	}
+
+	public void setDefaultShopId(Long defaultShopId) {
+		this.defaultShopId = defaultShopId;
 	}
 
 	public String getProfileImageUrl() {
@@ -287,13 +340,15 @@ public class User implements Serializable {
 	public String toString() {
 		return "User [Id=" + Id + ", userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", username=" + username + ", password=" + password + ", email=" + email + ", phoneNumber="
-				+ phoneNumber + ", parentUserId=" + parentUserId + ", shopList=" + shopList + ", profileImageUrl="
-				+ profileImageUrl + ", lastLoginDate=" + lastLoginDate + ", lastLoginDateDisplay="
-				+ lastLoginDateDisplay + ", joinDate=" + joinDate + ", role=" + role + ", authorities="
-				+ Arrays.toString(authorities) + ", isActive=" + isActive + ", isNotLocked=" + isNotLocked
-				+ ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2 + ", addressLine3=" + addressLine3
-				+ ", state=" + state + ", pinCode=" + pinCode + ", remarks=" + remarks + ", roleObject=" + roleObject
-				+ "]";
+				+ phoneNumber + ", parentUserId=" + parentUserId + ", shopList=" + shopList + ", defaultShopId="
+				+ defaultShopId + ", profileImageUrl=" + profileImageUrl + ", lastLoginDate=" + lastLoginDate
+				+ ", lastLoginDateDisplay=" + lastLoginDateDisplay + ", joinDate=" + joinDate + ", role=" + role
+				+ ", authorities=" + Arrays.toString(authorities) + ", isActive=" + isActive + ", isNotLocked="
+				+ isNotLocked + ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2 + ", addressLine3="
+				+ addressLine3 + ", state=" + state + ", pinCode=" + pinCode + ", remarks=" + remarks + ", roleObject="
+				+ roleObject + "]";
 	}
+
+	
 
 }

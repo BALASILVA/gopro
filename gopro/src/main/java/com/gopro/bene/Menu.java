@@ -12,11 +12,19 @@ import javax.persistence.ManyToOne;
 public class Menu {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false, updatable = false)
+	@Column(name="menuid", nullable = false, updatable = false)
 	private String menuId;
+	
+	@Column(name="menuname")
 	private String menuName;
+	
+	@Column(name="createddate")
 	private String createdDate;
+	
+	@Column(name="isactive")
 	private String isActive;
+	
+	@Column(name="link")
 	private String link;
 
 	public Menu() {

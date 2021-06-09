@@ -12,4 +12,6 @@ public interface RoleService {
 
 	Role getRoleById(int roleId);
 
+	List<Role> findAllChildRoleForLoginUser();
+
 }

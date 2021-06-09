@@ -29,4 +29,10 @@ public class RoleController {
     public List<Role> findAllRoleWithOutSuperAdmin() {
         return roleService.findAllRoleWithOutSuperAdmin();
     }
+	
+	@GetMapping("/userrole")
+    public List<Role> findAllRoleByUserId() {
+        return roleService.findAllChildRoleForLoginUser();
+    }
+	
 }

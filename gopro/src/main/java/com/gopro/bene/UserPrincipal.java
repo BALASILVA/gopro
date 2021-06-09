@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 
 public class UserPrincipal implements UserDetails {
-    private User user;
+
+	
+	private User user;
 
     public UserPrincipal(User user) {
         this.user = user;
@@ -50,7 +52,15 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return this.user.isActive();
     }
+    
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
 	@Override
 	public String toString() {
 		return "UserPrincipal [user=" + user + "]";

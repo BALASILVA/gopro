@@ -11,9 +11,12 @@ public class Authority {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false, updatable = false)
+	@Column(name="authorityid", nullable = false, updatable = false)
 	private int authorityId;
+	
+	@Column(name="roleid")
 	private int roleId;
+	
 	private String authority;
 
 	public Authority() {
