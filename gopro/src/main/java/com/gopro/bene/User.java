@@ -1,6 +1,9 @@
 package com.gopro.bene;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,49 +13,49 @@ import java.util.List;
 public class User implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
-	@SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq")
-	@Column(name="id" ,nullable = false, updatable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "user_seq_generator")
+	@SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq", allocationSize = 1, initialValue = 1)
+	@Column(name = "id", nullable = false, updatable = false)
 	private Long Id;
-	
+
 	@Column(name = "userid")
 	private String userId;
-	
+
 	@Column(name = "firstname")
 	private String firstName;
-	
+
 	@Column(name = "lastname")
 	private String lastName;
-	
+
 	@Column(name = "username")
 	private String username;
-	
+
 	@Column(name = "password")
 	private String password;
-	
-	@Column(name="email", nullable = false, unique = true)
+
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
-	
+
 	@Column(name = "phonenumber")
 	private String phoneNumber;
-	
+
 	@Column(name = "parentuserid")
 	private Long parentUserId;
-	
+
 	@ManyToMany(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "shopid")
 	@Column(name = "shoplist")
 	private List<Shop> shopList;
-	
+
 	@Column(name = "defaultshopid")
 	private Long defaultShopId;
-	
+
 	@Column(name = "profileimageurl")
 	private String profileImageUrl;
-	
+
 	@Column(name = "lastlogindate")
 	private Date lastLoginDate;
-	
+
 	@Column(name = "lastlogindatedisplay")
 	private Date lastLoginDateDisplay;
 
@@ -61,31 +64,31 @@ public class User implements Serializable {
 
 	private String role; // ROLE_USER{ read, edit }, ROLE_ADMIN {delete}
 	private String[] authorities;
-	
+
 	@Column(name = "isactive")
 	private boolean isActive;
-	
+
 	@Column(name = "isnotlocked")
 	private boolean isNotLocked;
-	
+
 	@Column(name = "addressline1")
 	private String addressLine1;
-	
+
 	@Column(name = "addressline2")
 	private String addressLine2;
-	
+
 	@Column(name = "addressline3")
 	private String addressLine3;
-	
+
 	@Column(name = "state")
 	private String state;
-	
+
 	@Column(name = "pincode")
 	private String pinCode;
-	
+
 	@Column(name = "remarks")
 	private String remarks;
-	
+
 	@OneToOne
 	@JoinColumn(name = "roleid")
 	private Role roleObject;
@@ -348,7 +351,5 @@ public class User implements Serializable {
 				+ addressLine3 + ", state=" + state + ", pinCode=" + pinCode + ", remarks=" + remarks + ", roleObject="
 				+ roleObject + "]";
 	}
-
-	
 
 }

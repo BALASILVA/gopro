@@ -16,8 +16,10 @@ spring:
     username: root
   jpa:
     show-sql: true
+    #show-sql: false
     hibernate:
       ddl-auto: update
+      value: 
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

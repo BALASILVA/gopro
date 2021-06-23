@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.gopro.constant.UserImplConstant.*;
@@ -130,25 +129,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public User addNewUser(Long parentUserId, String firstName, String email, String phoneNumber, String addressLine1,
+	public User addNewUser( String firstName, String email, String phoneNumber, String addressLine1,
 			List<Shop> shopList, Role role, String remarks)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
 		validateNewUsernameAndEmail(EMPTY, email);
+		
+		User logedInUser = authendicationFacade.getCurrentUserDetails();
+		
 		User user = new User();
 		List<Shop> shopListFromInputId = shopService.findAllShopById(shopList);
 
 		if (shopListFromInputId.size() > 0) {
 			user.setDefaultShopId(shopListFromInputId.get(0).getShopId());
 		}
-
+        
 		user.setRoleObject(role);
 		user.setShopList(shopListFromInputId);
-		user.setParentUserId(parentUserId);
 		String pass = generatePassword();
 		String encodedPassword = encodePassword(pass);
 		System.out.println("USerPasswoord" + pass);
 		user.setFirstName(firstName);
 		user.setEmail(email);
+		user.setPhoneNumber(phoneNumber);
+		user.setRemarks(remarks);
 		// Here we Authendicate by email. In spring security manager have
 		// authendicatebyuserName class only
 		// For this purpose we store email in userName column.
@@ -159,9 +162,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setPassword(encodedPassword);
 		user.setActive(true);
 		user.setNotLocked(true);
-		Role roleByRoleId = roleService.getRoleById(role.getRoleId());
-		System.out.println(roleByRoleId);
+		Role roleByRoleId = roleService.getRoleById(role.getRoleId());	
 		user.setRole(roleByRoleId.getRoleName());
+		
+		if(logedInUser.getParentUserId()==0)
+		{
+			//log in user is super admin
+			user.setParentUserId(logedInUser.getId());
+		}
+		else
+		{
+			//log in user is non super admin
+			user.setParentUserId(logedInUser.getParentUserId());
+		}
+		
 		user.setProfileImageUrl(getTemporaryProfileImageUrl());
 		userRepository.save(user);
 		return user;
@@ -212,9 +226,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			searchCredentialDTO.setSearchKeyWord("");
 		}
 		searchCredentialDTO.setSearchKeyWord("%" + searchCredentialDTO.getSearchKeyWord() + "%");
+		
 		try {
 			Page<User> list = userRepository.getAllUserPaginationAndSorting(searchCredentialDTO.getId(),
-					searchCredentialDTO.getParentUserId(), searchCredentialDTO.getFirstName(),
+					searchCredentialDTO.getParentUserId(),userFromDb.getRoleObject().getRoleId(), searchCredentialDTO.getFirstName(),
 					searchCredentialDTO.getEmail(), searchCredentialDTO.getPhoneNumber(),
 					searchCredentialDTO.getRoleId() == 0 ? null : (long) searchCredentialDTO.getRoleId(),
 					searchCredentialDTO.getSearchKeyWord(), pageable);
@@ -327,5 +342,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return userRepository.save(userFromDataBase);
 	}
 
+	@Override
+	public boolean updateDefaultShop(Shop shop) {
+		User logInUser = authendicationFacade.getCurrentUserDetails();
+
+		try {
+			Shop selectShop = logInUser.getShopList().stream().filter(obj -> obj.getShopId() == shop.getShopId())
+					.findAny().orElse(null);
+			if (selectShop != null) {
+				if (logInUser.getDefaultShopId() == shop.getShopId())
+					return true;
+				else
+					userRepository.updateDefaultShopId(selectShop.getShopId(), logInUser.getId());
+			}
+		} catch (Exception ex) {
+			return false;
+		}
+		return false;
+	}
 
 }

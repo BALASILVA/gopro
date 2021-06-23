@@ -4,6 +4,7 @@ import com.gopro.bene.User;
 import com.gopro.bene.UserPrincipal;
 import com.gopro.bene.Authority;
 import com.gopro.bene.SearchCredentialDTO;
+import com.gopro.bene.Shop;
 import com.gopro.exception.ExceptionHandling;
 import com.gopro.exception.domain.EmailExistException;
 import com.gopro.exception.domain.UserNotFoundException;
@@ -12,6 +13,7 @@ import com.gopro.service.AuthorityService;
 import com.gopro.service.UserService;
 import com.gopro.utility.JWTTokenProvider;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -81,7 +83,7 @@ public class UserController extends ExceptionHandling {
 	@PostMapping("/add")
 	public ResponseEntity<User> addNewUser(@RequestBody User user)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		User newUser = userService.addNewUser(user.getParentUserId(),user.getFirstName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
+		User newUser = userService.addNewUser(user.getFirstName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
 		return new ResponseEntity<>(newUser, OK);
 	}
 	
@@ -92,6 +94,13 @@ public class UserController extends ExceptionHandling {
 		User updatedUser = userService.updateUser(user.getId(),user.getFirstName(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
 		
 		return new ResponseEntity<>(updatedUser, OK);
+	}
+	
+	@PostMapping("/updatedefaultshop")
+	public ResponseEntity<Boolean> updateDefaultShop(@RequestBody Shop shop)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		boolean isUpdated  = userService.updateDefaultShop(shop);
+		return new ResponseEntity<>(isUpdated , OK);
 	}
 	
 	

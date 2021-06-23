@@ -1,6 +1,5 @@
 package com.gopro.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -22,7 +21,8 @@ public interface ProductRepo extends PagingAndSortingRepository<Product, Long> {
 			@Param("startAvailableStock") Long startAvailableStock, @Param("endAvailableStock") Long endAvailableStock,
 			@Param("searchKeyWord") String searchKeyWord, @Param("shopId") Long shopId, Pageable pageable);
 
-	public Product save(Product product);
+    @Query(value="SELECT * FROM   product WHERE shopid = :shopId", nativeQuery=true)
+	public List<Product> getAllProductsByShopId(@Param("shopId")Long shopId);
 
 	
 }

@@ -1,12 +1,6 @@
 package com.gopro.bene;
 
 import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 
 public class SearchCredentialDTO {
 
@@ -58,6 +52,15 @@ public class SearchCredentialDTO {
 	private String state;
 	private String pinCode;
 
+	// Invoice Module
+	private Long invoiceId;
+	private Long customerMobileNo;
+	private int noOfProduct;
+	private Double totalPrice;
+	private String paymentType;
+	private String userName;
+	private String remarks;
+
 	// Role Module
 	private int roleId;
 	private String roleName;
@@ -72,7 +75,8 @@ public class SearchCredentialDTO {
 			Long startAvailableStock, Long endAvailableStock, Long totalSale, Long startTotalSale, Long endTotalSale,
 			Date lastLoadDate, Date startLastLoadDate, Date endLastLoadDate, Long shopId, String shopName,
 			String addressLineOne, String addressLineTwo, String addressLineThree, String district, String state,
-			String pinCode, int roleId, String roleName) {
+			String pinCode, Long invoiceId, Long customerMobileNo, int noOfProduct, Double totalPrice,
+			String paymentType, String userName2, String remarks, int roleId, String roleName) {
 		super();
 		this.page = page;
 		this.size = size;
@@ -114,6 +118,13 @@ public class SearchCredentialDTO {
 		this.district = district;
 		this.state = state;
 		this.pinCode = pinCode;
+		this.invoiceId = invoiceId;
+		this.customerMobileNo = customerMobileNo;
+		this.noOfProduct = noOfProduct;
+		this.totalPrice = totalPrice;
+		this.paymentType = paymentType;
+		userName = userName2;
+		this.remarks = remarks;
 		this.roleId = roleId;
 		this.roleName = roleName;
 	}
@@ -438,6 +449,62 @@ public class SearchCredentialDTO {
 		this.pinCode = pinCode;
 	}
 
+	public Long getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(Long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+
+	public Long getCustomerMobileNo() {
+		return customerMobileNo;
+	}
+
+	public void setCustomerMobileNo(Long customerMobileNo) {
+		this.customerMobileNo = customerMobileNo;
+	}
+
+	public int getNoOfProduct() {
+		return noOfProduct;
+	}
+
+	public void setNoOfProduct(int noOfProduct) {
+		this.noOfProduct = noOfProduct;
+	}
+
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 	public int getRoleId() {
 		return roleId;
 	}
@@ -469,7 +536,10 @@ public class SearchCredentialDTO {
 				+ startLastLoadDate + ", endLastLoadDate=" + endLastLoadDate + ", shopId=" + shopId + ", shopName="
 				+ shopName + ", addressLineOne=" + addressLineOne + ", addressLineTwo=" + addressLineTwo
 				+ ", addressLineThree=" + addressLineThree + ", district=" + district + ", state=" + state
-				+ ", pinCode=" + pinCode + ", roleId=" + roleId + ", roleName=" + roleName + "]";
+				+ ", pinCode=" + pinCode + ", invoiceId=" + invoiceId + ", customerMobileNo=" + customerMobileNo
+				+ ", noOfProduct=" + noOfProduct + ", totalPrice=" + totalPrice + ", paymentType=" + paymentType
+				+ ", userName=" + userName + ", remarks=" + remarks + ", roleId=" + roleId + ", roleName=" + roleName
+				+ "]";
 	}
 
 }

@@ -16,5 +16,7 @@ public interface ProductService {
 	Product addNewProduct(Product product);
 
 	Product updateProduct(Product product);
+
+	List<Product> getAllProductsByDefaultShopId();
 	
 }

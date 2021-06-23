@@ -20,13 +20,13 @@ import com.gopro.bene.User;
 import com.gopro.repository.ProductRepo;
 
 @Service
-public class ProducServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
 	ProductRepo productRepo;
 	AuthendicationFacade authenticationFacade;
 
 	@Autowired
-	public ProducServiceImpl(ProductRepo productRepo, @Lazy AuthendicationFacade authenticationFacade) {
+	public ProductServiceImpl(ProductRepo productRepo, @Lazy AuthendicationFacade authenticationFacade) {
 		super();
 		this.productRepo = productRepo;
 		this.authenticationFacade = authenticationFacade;
@@ -39,7 +39,10 @@ public class ProducServiceImpl implements ProductService {
 
 	@Override
 	public Page<Product> getProductPaginationAndSearching(SearchCredentialDTO searchCredentialDTO) {
-
+		
+		User logedInUser = authenticationFacade.getCurrentUserDetails();
+		searchCredentialDTO.setShopId(logedInUser.getDefaultShopId());
+		
 		Sort sort = null;
 		if (StringUtils.isEmpty(searchCredentialDTO.getShortBy())) {
 			searchCredentialDTO.setShortBy("productid");
@@ -110,5 +113,13 @@ public class ProducServiceImpl implements ProductService {
 		productCopy.setRemarks(product.getRemarks());
 
 		return productRepo.save(productCopy);
+	}
+
+	@Override
+	public List<Product> getAllProductsByDefaultShopId() {
+		User logedInUser = authenticationFacade.getCurrentUserDetails();
+		Long shopId = logedInUser.getDefaultShopId();
+		System.out.println(shopId);
+		return productRepo.getAllProductsByShopId(shopId);
 	}
 }

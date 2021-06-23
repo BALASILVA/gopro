@@ -17,7 +17,7 @@ public interface UserService {
     User register(String userName,String shopName, String email, String password) throws UserNotFoundException, UsernameExistException, EmailExistException;
   
     //User added by super admin role
-  	User addNewUser(Long parentUserId, String firstName, String email, String phoneNumber, String addressLine1,
+  	User addNewUser( String firstName, String email, String phoneNumber, String addressLine1,
   			List<Shop> shopList, Role role, String remarks)  throws UserNotFoundException, UsernameExistException, EmailExistException;
 
   	List<User> getUsers();
@@ -33,6 +33,8 @@ public interface UserService {
 
 	User updateUser(Long id, String firstName, String phoneNumber, String addressLine1, List<Shop> shopList,
 			Role roleObject, String remarks)  throws UserNotFoundException;
+
+	boolean updateDefaultShop(Shop shop);
     
     
 }

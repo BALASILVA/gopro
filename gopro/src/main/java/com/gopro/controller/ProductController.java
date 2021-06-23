@@ -40,6 +40,12 @@ public class ProductController {
 		return productService.getProductPaginationAndSearching(searchCredentialDTO);
 	}
     
+    @GetMapping
+	public List<Product>  getAllProducts()
+	{
+		return productService.getAllProductsByDefaultShopId();
+	}
+    
     @PostMapping(value="/addnew")
     public Product addNewProduct(@RequestBody Product product)
     {

@@ -20,7 +20,7 @@ import javax.persistence.SequenceGenerator;
 public class Shop {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "shop_seq_generator")
-	@SequenceGenerator(name = "shop_seq_generator", sequenceName = "shop_seq")
+	@SequenceGenerator(name = "shop_seq_generator", sequenceName = "shop_seq",allocationSize = 1,initialValue = 1)
 	@Column(name = "shopid", nullable = false, updatable = false)
 	private Long shopId;
 
