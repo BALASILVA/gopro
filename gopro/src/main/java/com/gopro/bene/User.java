@@ -39,7 +39,7 @@ public class User implements Serializable {
 	@Column(name = "phonenumber")
 	private String phoneNumber;
 
-	@Column(name = "parentuserid")
+	@Column(name = "parentuserid",nullable = false, updatable = false)
 	private Long parentUserId;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
@@ -93,10 +93,36 @@ public class User implements Serializable {
 	@JoinColumn(name = "roleid")
 	private Role roleObject;
 
-	public User() {
-		// TODO Auto-generated constructor stub
+	/////Query Constructors Dont remove//////
+	// Query Name = 
+	// Method Name = 
+	public User(Long id, String username) {
+		this.Id = id;
+		this.username = username;
 	}
 
+	/////Query Constructors Dont remove///////
+	
+	/////Query Constructors Dont remove//////	
+	public User(Long id, String firstName, String lastName, String username, String phoneNumber,
+			String profileImageUrl) {
+		this.Id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.phoneNumber = phoneNumber;
+		this.profileImageUrl = profileImageUrl;
+	}
+	/////Query Constructors Dont remove//////
+
+	
+	
+	public User() {
+		
+	}
+
+
+	
 	public User(Long id, String userId, String firstName, String lastName, String username, String password,
 			String email, String phoneNumber, Long parentUserId, List<Shop> shopList, Long defaultShopId,
 			String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role,

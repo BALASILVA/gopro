@@ -14,4 +14,6 @@ public interface InvoiceService {
 
 	Page<Invoice> getAllInvoicePaginationAndSorting(SearchCredentialDTO searchCredentialDTO);
 
+	Invoice sendReprintNotification(Invoice invoice);
+
 }

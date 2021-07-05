@@ -16,6 +16,7 @@ public class UserImplConstant {
     //4	Y	WORKERS
     
     public static final int SUPER_ADMIN_ROLE_ID = 1;
+    public static final int HR_ROLE_ID = 2;
     public static final int MANAGER_ROLE_ID = 20;
     public static final int SUPERVISOR_ROLE_ID = 30;
     public static final int WORKER_ROLE_ID = 40;

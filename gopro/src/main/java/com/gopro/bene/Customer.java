@@ -11,16 +11,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "customer")
 public class Customer {
-
-	/*
-	 * @Id
-	 * 
-	 * @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
-	 * "seq_generator_customerid")
-	 * 
-	 * @SequenceGenerator(name = "seq_generator_customerid", sequenceName =
-	 * "seq_customerid", allocationSize = 1, initialValue = 1)
-	 */
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -38,13 +38,19 @@ public class InvoiceController {
 		return invoice;
 	}
 
-	@PostMapping
+	@PostMapping(value="add")
 	public ResponseEntity<Invoice> addInvoice(@RequestBody Invoice invoice) {
 		System.out.println("invoice" + invoice);
 		Invoice savedInvoice = invoiceService.add(invoice);
 		return new ResponseEntity<>(savedInvoice, OK);
 	}
 	
+	@PostMapping(value="reprint")
+	public ResponseEntity<Invoice> reAddInvoice(@RequestBody Invoice invoice) {
+		System.out.println("reprinting ");
+		Invoice updatedInvoice  = invoiceService.sendReprintNotification(invoice);
+		return new ResponseEntity<>(updatedInvoice, OK);
+	}
 	
 	@PostMapping(value="/details")
 	public ResponseEntity<Invoice> getInvoiceDetail(@RequestBody Invoice invoice) {
@@ -56,6 +62,8 @@ public class InvoiceController {
 	public ResponseEntity<Page<Invoice>> getAllInvoiceByShopId(@RequestBody SearchCredentialDTO searchCredentialDTO)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
 		Page<Invoice> invoiceList = invoiceService.getAllInvoicePaginationAndSorting(searchCredentialDTO);
+		
+		System.out.println(invoiceList);
 		return new ResponseEntity<>(invoiceList, OK);
 	}	
 }

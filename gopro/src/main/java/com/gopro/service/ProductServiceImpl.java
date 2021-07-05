@@ -1,5 +1,6 @@
 package com.gopro.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,6 +97,16 @@ public class ProductServiceImpl implements ProductService {
 
 		// Default Product Settings
 		product.setTotalSale((long) 0);
+		
+		if(StringUtils.isNotEmpty(product.getBarCode()))
+		{
+			product.setIsSysGenBarCode("N");
+		}
+		else
+		{
+			product.setBarCode("CUS"+new Date());
+			product.setIsSysGenBarCode("Y");
+		}
 		
 		Product savedProduct = productRepo.save(product);
 		return savedProduct;

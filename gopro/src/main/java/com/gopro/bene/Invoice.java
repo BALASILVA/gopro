@@ -33,7 +33,7 @@ import com.gopro.queryconstant.QueryConstant;
 		@ColumnResult(name = "shopId", type = Long.class), @ColumnResult(name = "userId", type = Long.class),
 		@ColumnResult(name = "userName", type = String.class), @ColumnResult(name = "remarks", type = String.class) }))
 // Need to create one more filed constructor with above fields
-@NamedNativeQuery(name = "findAllInvoiceMapping", query = QueryConstant.INVOICE_SEARCH_QUERY, resultClass = Invoice.class, resultSetMapping = "findAllInvoiceMapping")
+@NamedNativeQuery(name = "findAllInvoiceMapping", query = QueryConstant.FIND_ALL_INVOICE_SEARCH, resultClass = Invoice.class, resultSetMapping = "findAllInvoiceMapping")
 @Entity
 @Table(name = "invoice")
 public class Invoice {
@@ -46,7 +46,8 @@ public class Invoice {
 	@Column(name = "customermobileno")
 	private Long customerMobileNo;
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "invoice")
+	@OneToMany(targetEntity = InvoiceProductMap.class,cascade = { CascadeType.ALL })
+	@JoinColumn(name="invoiceid",referencedColumnName = "invoiceid")
 	private List<InvoiceProductMap> invoiceProductMap;
 
 	@Column(name = "noofproduct")
@@ -57,6 +58,12 @@ public class Invoice {
 
 	@Column(name = "paymenttype")
 	private String paymentType;
+
+	@Column(name = "isreprinted")
+	private boolean isRePrinted;
+
+	@Column(name = "nooftimereprinted")
+	private int noOfTimeRePrinted;
 
 	@Column(name = "date")
 	private Date date;
@@ -81,6 +88,8 @@ public class Invoice {
 	public Invoice() {
 	}
 
+	// Param constructor for native Query
+	// Dont removed This constructor
 	public Invoice(Long invoiceId, Long customerMobileNo, int noOfProduct, Double totalPrice, String paymentType,
 			Date date, Long shopId, Long userId, String userName, String remarks) {
 		super();
@@ -96,9 +105,11 @@ public class Invoice {
 		this.remarks = remarks;
 	}
 
+	
+	
 	public Invoice(Long invoiceId, Long customerMobileNo, List<InvoiceProductMap> invoiceProductMap, int noOfProduct,
-			Double totalPrice, String paymentType, Date date, Long shopId, Long userId, String userName, String remarks,
-			Customer customer) {
+			Double totalPrice, String paymentType, boolean isRePrinted, int noOfTimeRePrinted, Date date, Long shopId,
+			Long userId, String userName, String remarks, Customer customer) {
 		super();
 		this.invoiceId = invoiceId;
 		this.customerMobileNo = customerMobileNo;
@@ -106,6 +117,8 @@ public class Invoice {
 		this.noOfProduct = noOfProduct;
 		this.totalPrice = totalPrice;
 		this.paymentType = paymentType;
+		this.isRePrinted = isRePrinted;
+		this.noOfTimeRePrinted = noOfTimeRePrinted;
 		this.date = date;
 		this.shopId = shopId;
 		this.userId = userId;
@@ -162,6 +175,22 @@ public class Invoice {
 		this.paymentType = paymentType;
 	}
 
+	public boolean isRePrinted() {
+		return isRePrinted;
+	}
+
+	public void setRePrinted(boolean isRePrinted) {
+		this.isRePrinted = isRePrinted;
+	}
+
+	public int getNoOfTimeRePrinted() {
+		return noOfTimeRePrinted;
+	}
+
+	public void setNoOfTimeRePrinted(int noOfTimeRePrinted) {
+		this.noOfTimeRePrinted = noOfTimeRePrinted;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -214,8 +243,10 @@ public class Invoice {
 	public String toString() {
 		return "Invoice [invoiceId=" + invoiceId + ", customerMobileNo=" + customerMobileNo + ", invoiceProductMap="
 				+ invoiceProductMap + ", noOfProduct=" + noOfProduct + ", totalPrice=" + totalPrice + ", paymentType="
-				+ paymentType + ", date=" + date + ", shopId=" + shopId + ", userId=" + userId + ", userName="
-				+ userName + ", remarks=" + remarks + ", customer=" + customer + "]";
+				+ paymentType + ", isRePrinted=" + isRePrinted + ", noOfTimeRePrinted=" + noOfTimeRePrinted + ", date="
+				+ date + ", shopId=" + shopId + ", userId=" + userId + ", userName=" + userName + ", remarks=" + remarks
+				+ ", customer=" + customer + "]";
 	}
 
+	
 }

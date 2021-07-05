@@ -7,6 +7,7 @@ import com.gopro.bene.User;
 import com.gopro.exception.domain.EmailExistException;
 import com.gopro.exception.domain.UserNotFoundException;
 import com.gopro.exception.domain.UsernameExistException;
+import com.gopro.repository.UserRepository.UserIdAndUserName;
 
 import java.util.List;
 
@@ -35,6 +36,10 @@ public interface UserService {
 			Role roleObject, String remarks)  throws UserNotFoundException;
 
 	boolean updateDefaultShop(Shop shop);
+
+	List<User> getUserForReprintNotification(User logedInUser);
+
+	List<User> getUserForSendMail();
     
     
 }

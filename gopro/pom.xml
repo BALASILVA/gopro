@@ -25,10 +25,9 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>org.ehcache</groupId>
-		    <artifactId>ehcache</artifactId>
-		    <version>3.6.3</version>
-		    <scope>runtime</scope>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>3.4.0</version>
 		</dependency>
 		
 		
@@ -82,19 +81,14 @@
 			<scope>test</scope>
 		</dependency>
 	
-<!-- 
-		<dependency>
-			<groupId>com.google.common</groupId>
-			<artifactId>google-collect</artifactId>
-			<version>0.5</version>
-		</dependency>
-				 -->
-				<!-- https://mvnrepository.com/artifact/com.google.collections/google-collections -->
 		<dependency>
 		    <groupId>com.google.collections</groupId>
 		    <artifactId>google-collections</artifactId>
 		    <version>1.0-rc1</version>
 		</dependency>
+		
+		
+				
 				
 	</dependencies>
 

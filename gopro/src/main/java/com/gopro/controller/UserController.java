@@ -111,7 +111,12 @@ public class UserController extends ExceptionHandling {
 		return new ResponseEntity<>(userList, OK);
 	}	
 	
-	
+	@PostMapping(value="/getuserformail")
+	public ResponseEntity<List<User>> getUserForSendMail()
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+			List<User> userList = userService.getUserForSendMail();
+		return new ResponseEntity<>(userList, OK);
+	}
 	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {
 		HttpHeaders headers = new HttpHeaders();

@@ -2,18 +2,14 @@ package com.gopro.bene;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,43 +18,64 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Product {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq_generator")
-	@SequenceGenerator(name = "product_seq_generator", sequenceName = "product_seq",allocationSize = 1,initialValue = 1)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false, name = "productid")
 	private Long productId;
-	
+
 	@Column(name = "productname")
 	private String productName;
-	
+
+	@Column(name = "barcode")
+	private String barCode;
+
+	@Column(name = "issysgenbarcode")
+	private String isSysGenBarCode;
+
 	@Column(name = "price")
 	private Long price;
-	
+
 	@Column(name = "availablestock")
 	private Long availableStock;
-	
+
 	@Column(name = "totalsale")
 	private Long totalSale;
-	
+
 	@Column(name = "remarks")
 	private String remarks;
-	
+
 	@Column(name = "isactive")
 	private String isActive;
-	
+
 	@Column(name = "lastloaddate")
 	private Date lastLoadDate;
-	
+
 	@Column(name = "createddate")
 	private Date createdDate;
 
-	
 	@ManyToOne
 	@JoinColumn(name = "shopid", referencedColumnName = "shopid")
-	@JsonIgnore 
+	@JsonIgnore
 	private Shop shop;
-	
-	
+
 	public Product() {
+	}
+
+	public Product(Long productId, String productName, String barCode, String isSysGenBarCode, Long price,
+			Long availableStock, Long totalSale, String remarks, String isActive, Date lastLoadDate, Date createdDate,
+			Shop shop) {
+		super();
+		this.productId = productId;
+		this.productName = productName;
+		this.barCode = barCode;
+		this.isSysGenBarCode = isSysGenBarCode;
+		this.price = price;
+		this.availableStock = availableStock;
+		this.totalSale = totalSale;
+		this.remarks = remarks;
+		this.isActive = isActive;
+		this.lastLoadDate = lastLoadDate;
+		this.createdDate = createdDate;
+		this.shop = shop;
 	}
 
 	public Long getProductId() {
@@ -75,6 +92,22 @@ public class Product {
 
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	public String getBarCode() {
+		return barCode;
+	}
+
+	public void setBarCode(String barCode) {
+		this.barCode = barCode;
+	}
+
+	public String getIsSysGenBarCode() {
+		return isSysGenBarCode;
+	}
+
+	public void setIsSysGenBarCode(String isSysGenBarCode) {
+		this.isSysGenBarCode = isSysGenBarCode;
 	}
 
 	public Long getPrice() {
@@ -141,27 +174,12 @@ public class Product {
 		this.shop = shop;
 	}
 
-	public Product(Long productId, String productName, Long price, Long availableStock, Long totalSale, String remarks,
-			String isActive, Date lastLoadDate, Date createdDate, Shop shop) {
-		super();
-		this.productId = productId;
-		this.productName = productName;
-		this.price = price;
-		this.availableStock = availableStock;
-		this.totalSale = totalSale;
-		this.remarks = remarks;
-		this.isActive = isActive;
-		this.lastLoadDate = lastLoadDate;
-		this.createdDate = createdDate;
-		this.shop = shop;
-	}
-
 	@Override
 	public String toString() {
-		return "Product [productId=" + productId + ", productName=" + productName + ", price=" + price
-				+ ", availableStock=" + availableStock + ", totalSale=" + totalSale + ", remarks=" + remarks
-				+ ", isActive=" + isActive + ", lastLoadDate=" + lastLoadDate + ", createdDate=" + createdDate
-				+ ", shop=" + shop + "]";
+		return "Product [productId=" + productId + ", productName=" + productName + ", barCode=" + barCode
+				+ ", isSysGenBarCode=" + isSysGenBarCode + ", price=" + price + ", availableStock=" + availableStock
+				+ ", totalSale=" + totalSale + ", remarks=" + remarks + ", isActive=" + isActive + ", lastLoadDate="
+				+ lastLoadDate + ", createdDate=" + createdDate + ", shop=" + shop + "]";
 	}
 
 }

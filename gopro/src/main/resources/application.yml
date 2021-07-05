@@ -18,12 +18,11 @@ spring:
     show-sql: true
     #show-sql: false
     hibernate:
-      ddl-auto: update
-      value: 
+      ddl-auto: update 
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
   mvc:
     throw-exception-if-no-handler-found: true
   resources:
-    add-mappings: false
+    add-mappings: false   

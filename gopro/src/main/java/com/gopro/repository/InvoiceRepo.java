@@ -16,7 +16,7 @@ public interface InvoiceRepo extends PagingAndSortingRepository<Invoice, Long> {
 	Page<Invoice> findAllOfInvoice(
 			@Param("invoiceId") Long invoiceId,
 			@Param("customerMobileNo") Long customerMobileNo,
-			@Param("noOfProduct") int noOfProduct, @Param("startPrice") Long startPrice,
+			@Param("noOfProduct") Long noOfProduct, @Param("startPrice") Long startPrice,
 			@Param("endPrice") Long endPrice, @Param("fromDate") String fromDate, @Param("toDate") String toDate,
 			@Param("paymentType") String paymentType, @Param("username") String username,
 			@Param("searchKeyWord") String searchKeyWord, @Param("shopId") Long shopId,Pageable pageable);

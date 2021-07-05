@@ -2,6 +2,8 @@ package com.gopro.bene;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class SearchCredentialDTO {
 
 	// Comman
@@ -61,6 +63,30 @@ public class SearchCredentialDTO {
 	private String userName;
 	private String remarks;
 
+	// Notification Module
+	private Long notificationId;
+	private String notificationType;
+	private String Subject;
+	private boolean isSystemGenerated;
+
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+	private Date notificationLatUpdateDate;
+
+	// Notification Meesage Map
+	private Long notificationMessageMapId;
+	private Long sendFrom;
+	private String message;
+	private Date time;
+
+	// Notification User Map
+	private Long NotificationUserMapId;
+	private String mappingType;
+	private Long sendTo;
+	private boolean isFavorite;
+	private boolean isDeleted;
+	private boolean isReaded;
+	private Date readTime;
+
 	// Role Module
 	private int roleId;
 	private String roleName;
@@ -76,7 +102,10 @@ public class SearchCredentialDTO {
 			Date lastLoadDate, Date startLastLoadDate, Date endLastLoadDate, Long shopId, String shopName,
 			String addressLineOne, String addressLineTwo, String addressLineThree, String district, String state,
 			String pinCode, Long invoiceId, Long customerMobileNo, int noOfProduct, Double totalPrice,
-			String paymentType, String userName2, String remarks, int roleId, String roleName) {
+			String paymentType, String userName2, String remarks, Long notificationId, String notificationType,
+			String subject, boolean isSystemGenerated, Date notificationLatUpdateDate, Long notificationMessageMapId,
+			Long sendFrom, String message, Date time, Long notificationUserMapId, String mappingType, Long sendTo,
+			boolean isFavorite, boolean isDeleted, boolean isReaded, Date readTime, int roleId, String roleName) {
 		super();
 		this.page = page;
 		this.size = size;
@@ -125,6 +154,22 @@ public class SearchCredentialDTO {
 		this.paymentType = paymentType;
 		userName = userName2;
 		this.remarks = remarks;
+		this.notificationId = notificationId;
+		this.notificationType = notificationType;
+		Subject = subject;
+		this.isSystemGenerated = isSystemGenerated;
+		this.notificationLatUpdateDate = notificationLatUpdateDate;
+		this.notificationMessageMapId = notificationMessageMapId;
+		this.sendFrom = sendFrom;
+		this.message = message;
+		this.time = time;
+		NotificationUserMapId = notificationUserMapId;
+		this.mappingType = mappingType;
+		this.sendTo = sendTo;
+		this.isFavorite = isFavorite;
+		this.isDeleted = isDeleted;
+		this.isReaded = isReaded;
+		this.readTime = readTime;
 		this.roleId = roleId;
 		this.roleName = roleName;
 	}
@@ -505,6 +550,134 @@ public class SearchCredentialDTO {
 		this.remarks = remarks;
 	}
 
+	public Long getNotificationId() {
+		return notificationId;
+	}
+
+	public void setNotificationId(Long notificationId) {
+		this.notificationId = notificationId;
+	}
+
+	public String getNotificationType() {
+		return notificationType;
+	}
+
+	public void setNotificationType(String notificationType) {
+		this.notificationType = notificationType;
+	}
+
+	public String getSubject() {
+		return Subject;
+	}
+
+	public void setSubject(String subject) {
+		Subject = subject;
+	}
+
+	public boolean isSystemGenerated() {
+		return isSystemGenerated;
+	}
+
+	public void setSystemGenerated(boolean isSystemGenerated) {
+		this.isSystemGenerated = isSystemGenerated;
+	}
+
+	public Date getNotificationLatUpdateDate() {
+		return notificationLatUpdateDate;
+	}
+
+	public void setNotificationLatUpdateDate(Date notificationLatUpdateDate) {
+		this.notificationLatUpdateDate = notificationLatUpdateDate;
+	}
+
+	public Long getNotificationMessageMapId() {
+		return notificationMessageMapId;
+	}
+
+	public void setNotificationMessageMapId(Long notificationMessageMapId) {
+		this.notificationMessageMapId = notificationMessageMapId;
+	}
+
+	public Long getSendFrom() {
+		return sendFrom;
+	}
+
+	public void setSendFrom(Long sendFrom) {
+		this.sendFrom = sendFrom;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
+	}
+
+	public Long getNotificationUserMapId() {
+		return NotificationUserMapId;
+	}
+
+	public void setNotificationUserMapId(Long notificationUserMapId) {
+		NotificationUserMapId = notificationUserMapId;
+	}
+
+	public String getMappingType() {
+		return mappingType;
+	}
+
+	public void setMappingType(String mappingType) {
+		this.mappingType = mappingType;
+	}
+
+	public Long getSendTo() {
+		return sendTo;
+	}
+
+	public void setSendTo(Long sendTo) {
+		this.sendTo = sendTo;
+	}
+
+	public boolean isFavorite() {
+		return isFavorite;
+	}
+
+	public void setFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public boolean isReaded() {
+		return isReaded;
+	}
+
+	public void setReaded(boolean isReaded) {
+		this.isReaded = isReaded;
+	}
+
+	public Date getReadTime() {
+		return readTime;
+	}
+
+	public void setReadTime(Date readTime) {
+		this.readTime = readTime;
+	}
+
 	public int getRoleId() {
 		return roleId;
 	}
@@ -538,7 +711,13 @@ public class SearchCredentialDTO {
 				+ ", addressLineThree=" + addressLineThree + ", district=" + district + ", state=" + state
 				+ ", pinCode=" + pinCode + ", invoiceId=" + invoiceId + ", customerMobileNo=" + customerMobileNo
 				+ ", noOfProduct=" + noOfProduct + ", totalPrice=" + totalPrice + ", paymentType=" + paymentType
-				+ ", userName=" + userName + ", remarks=" + remarks + ", roleId=" + roleId + ", roleName=" + roleName
+				+ ", userName=" + userName + ", remarks=" + remarks + ", notificationId=" + notificationId
+				+ ", notificationType=" + notificationType + ", Subject=" + Subject + ", isSystemGenerated="
+				+ isSystemGenerated + ", notificationLatUpdateDate=" + notificationLatUpdateDate
+				+ ", notificationMessageMapId=" + notificationMessageMapId + ", sendFrom=" + sendFrom + ", message="
+				+ message + ", time=" + time + ", NotificationUserMapId=" + NotificationUserMapId + ", mappingType="
+				+ mappingType + ", sendTo=" + sendTo + ", isFavorite=" + isFavorite + ", isDeleted=" + isDeleted
+				+ ", isReaded=" + isReaded + ", readTime=" + readTime + ", roleId=" + roleId + ", roleName=" + roleName
 				+ "]";
 	}
 

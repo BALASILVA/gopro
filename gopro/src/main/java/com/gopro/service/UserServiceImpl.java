@@ -1,5 +1,6 @@
 package com.gopro.service;
 
+
 import com.gopro.AuthendicationFacade.AuthendicationFacade;
 import com.gopro.bene.Authority;
 import com.gopro.bene.Product;
@@ -8,11 +9,13 @@ import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.bene.Shop;
 import com.gopro.bene.User;
 import com.gopro.bene.UserPrincipal;
+import com.gopro.constant.NotificationConstant;
 import com.gopro.constant.UserImplConstant;
 import com.gopro.exception.domain.EmailExistException;
 import com.gopro.exception.domain.UserNotFoundException;
 import com.gopro.exception.domain.UsernameExistException;
 import com.gopro.repository.UserRepository;
+import com.gopro.repository.UserRepository.UserIdAndUserName;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +35,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import static com.gopro.enumeration.Role.ROLE_SUPER_ADMIN;
+import static com.gopro.constant.SearchGridConstant.DEFAULT_USER_MODULE_PAGE_SIZE;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -216,7 +220,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 
 		Pageable pageable = null;
-
+		if(searchCredentialDTO.getSize() == 0)
+		{			
+			searchCredentialDTO.setSize(DEFAULT_USER_MODULE_PAGE_SIZE);
+		}
+		
 		if (sort != null) {
 			pageable = PageRequest.of(searchCredentialDTO.getPage(), searchCredentialDTO.getSize(), sort);
 		} else {
@@ -359,6 +367,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return false;
 		}
 		return false;
+	}
+
+	@Override
+	public List<User> getUserForReprintNotification(User logedInUser) {
+		//int roleId[] = NotificationConstant.INVOICE_REPRINT_NOTIFICTION_TO_SEND_ROLE_ARR;
+		List<Integer> roles = NotificationConstant.INVOICE_REPRINT_NOTIFICTION_TO_SEND_ROLE_LIST;
+		List<User> user = userRepository.getUserForReprintNotification(logedInUser.getParentUserId(), roles);
+		System.out.println("out Side user service to get user id ");
+		return user;
+	}
+
+	@Override
+	public List<User> getUserForSendMail() {
+
+		User logInUser = authendicationFacade.getCurrentUserDetails();
+		
+		Long parentUserId  = 0L;
+		
+		if(logInUser.getParentUserId() == PARENT_USER_ID_SUPER_ADMIN)
+		{
+			parentUserId  = logInUser.getId();
+		}
+		
+		return userRepository.getUserForSendMail(parentUserId);
+		
 	}
 
 }
