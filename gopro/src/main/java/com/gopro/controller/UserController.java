@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -111,11 +112,18 @@ public class UserController extends ExceptionHandling {
 		return new ResponseEntity<>(userList, OK);
 	}	
 	
-	@PostMapping(value="/getuserformail")
+	@GetMapping(value="/getuserformail")
 	public ResponseEntity<List<User>> getUserForSendMail()
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
 			List<User> userList = userService.getUserForSendMail();
 		return new ResponseEntity<>(userList, OK);
+	}
+	
+	@GetMapping(value="/hasnewmail")
+	public ResponseEntity<Boolean> newMailViewed()
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+			boolean updated = userService.haveNewMail();
+		return new ResponseEntity<>(updated, OK);
 	}
 	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {

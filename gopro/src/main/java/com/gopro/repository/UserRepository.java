@@ -2,13 +2,16 @@ package com.gopro.repository;
 
 import java.util.List;
 
+import javax.persistence.Transient;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import static com.gopro.queryconstant.UserQueryConstant.*;
+
+
 import com.gopro.bene.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -37,7 +40,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> getUserForReprintNotification(@Param("parentUserId") Long parentUserId,
 			@Param("roleId") List<Integer> roles);
  
-	@Query(value = FIND_USERS_FOR_SEND_MAIL, nativeQuery = true)
+	@Query(nativeQuery = true , name = "findUserForSendMail")
 	List<User> getUserForSendMail(@Param("parentUserId") Long parentUserId);
+
+	@Query(value = "select hasNewMail from user where userName = :logInUserName" , nativeQuery = true)
+	boolean haveNewMail(@Param("logInUserName") String logInUserName);	
+	
+	@Modifying
+	@Query(value = "update user set hasnewmail=:value where id in :userId", nativeQuery = true)
+	void updateNewMailTrue(@Param("value") boolean value,@Param("userId")List<Long> userId );
 
 }

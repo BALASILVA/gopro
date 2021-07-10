@@ -20,6 +20,8 @@ public class NotificationConstant {
 	
 	public static final String NOTIFICATION_TYPE_CREATE_NEW= "CREATE_NEW";
 	
+	public static final String NOTIFICATION_TYPE_COMPOSE_NEW= "COMPOSE_NEW";
+	
 	public static final String NOTIFICATION_TYPE_CREATE_FORWARD= "FORWARD";
 
 	public static final String NOTIFICATION_TYPE_REPRINT= "REPRINT";

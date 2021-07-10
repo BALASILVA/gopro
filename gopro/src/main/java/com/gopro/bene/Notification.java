@@ -51,7 +51,7 @@ public class Notification {
 	@Column(name = "notificationlatupdatedate")
 	private Date notificationLatUpdateDate;
 
-	@OneToMany(targetEntity = NotificationMessageMap.class , cascade = { CascadeType.ALL })
+	@OneToMany(targetEntity = NotificationMessageMap.class , cascade = { CascadeType.PERSIST })
 	@JoinColumn(name="notificationid",referencedColumnName = "notificationid")
 	private List<NotificationMessageMap> notificationMessageMap = new ArrayList<NotificationMessageMap>();
 

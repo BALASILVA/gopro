@@ -40,6 +40,10 @@ public interface UserService {
 	List<User> getUserForReprintNotification(User logedInUser);
 
 	List<User> getUserForSendMail();
+
+	boolean haveNewMail();
+
+	boolean updateNewMailTrue(List<Long> userId);
     
     
 }

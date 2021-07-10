@@ -8,7 +8,7 @@ public class UserImplConstant {
     public static final String FOUND_USER_BY_USERNAME = "Returning found user by username: ";
     public static final String DEFAULT_USER_IMAGE_PATH = "/user/image/profile/temp";
     
-    public static final Long PARENT_USER_ID_SUPER_ADMIN = (long) 0;
+    public static final Long PARENT_USER_ID_SUPER_ADMIN = 0L;
     
     //1	Y	ROLE_SUPER_ADMIN
     //2	Y	MANAGER

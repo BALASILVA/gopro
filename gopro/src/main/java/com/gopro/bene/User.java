@@ -1,14 +1,23 @@
 package com.gopro.bene;
 
+
 import javax.persistence.*;
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import com.gopro.queryconstant.UserQueryConstant;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+@SqlResultSetMapping(name = "findUserForSendMail", classes = @ConstructorResult(targetClass = com.gopro.bene.User.class, columns = {
+		@ColumnResult(name = "Id", type = Long.class),
+		@ColumnResult(name = "username", type = String.class),
+		@ColumnResult(name = "firstName", type = String.class),
+		@ColumnResult(name = "lastName", type = String.class),
+		@ColumnResult(name = "phoneNumber", type = String.class),
+		@ColumnResult(name = "profileImageUrl", type = String.class)
+	 }))
+@NamedNativeQuery(name = "findUserForSendMail", query = UserQueryConstant.FIND_USERS_FOR_SEND_MAIL, resultClass = User.class, resultSetMapping = "findUserForSendMail")
 @Entity
 public class User implements Serializable {
 
@@ -88,6 +97,9 @@ public class User implements Serializable {
 
 	@Column(name = "remarks")
 	private String remarks;
+	
+	@Column(name = " hasnewmail", columnDefinition = "boolean default false",nullable = false)
+	private boolean hasNewMail;
 
 	@OneToOne
 	@JoinColumn(name = "roleid")
@@ -121,13 +133,11 @@ public class User implements Serializable {
 		
 	}
 
-
-	
 	public User(Long id, String userId, String firstName, String lastName, String username, String password,
 			String email, String phoneNumber, Long parentUserId, List<Shop> shopList, Long defaultShopId,
 			String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role,
 			String[] authorities, boolean isActive, boolean isNotLocked, String addressLine1, String addressLine2,
-			String addressLine3, String state, String pinCode, String remarks, Role roleObject) {
+			String addressLine3, String state, String pinCode, String remarks, boolean hasNewMail, Role roleObject) {
 		super();
 		Id = id;
 		this.userId = userId;
@@ -154,6 +164,7 @@ public class User implements Serializable {
 		this.state = state;
 		this.pinCode = pinCode;
 		this.remarks = remarks;
+		this.hasNewMail = hasNewMail;
 		this.roleObject = roleObject;
 	}
 
@@ -357,6 +368,14 @@ public class User implements Serializable {
 		this.remarks = remarks;
 	}
 
+	public boolean isHasNewMail() {
+		return hasNewMail;
+	}
+
+	public void setHasNewMail(boolean hasNewMail) {
+		this.hasNewMail = hasNewMail;
+	}
+
 	public Role getRoleObject() {
 		return roleObject;
 	}
@@ -367,15 +386,31 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [Id=" + Id + ", userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", username=" + username + ", password=" + password + ", email=" + email + ", phoneNumber="
-				+ phoneNumber + ", parentUserId=" + parentUserId + ", shopList=" + shopList + ", defaultShopId="
-				+ defaultShopId + ", profileImageUrl=" + profileImageUrl + ", lastLoginDate=" + lastLoginDate
-				+ ", lastLoginDateDisplay=" + lastLoginDateDisplay + ", joinDate=" + joinDate + ", role=" + role
-				+ ", authorities=" + Arrays.toString(authorities) + ", isActive=" + isActive + ", isNotLocked="
-				+ isNotLocked + ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2 + ", addressLine3="
-				+ addressLine3 + ", state=" + state + ", pinCode=" + pinCode + ", remarks=" + remarks + ", roleObject="
-				+ roleObject + "]";
+		return "User [" + (Id != null ? "Id=" + Id + ", " : "") + (userId != null ? "userId=" + userId + ", " : "")
+				+ (firstName != null ? "firstName=" + firstName + ", " : "")
+				+ (lastName != null ? "lastName=" + lastName + ", " : "")
+				+ (username != null ? "username=" + username + ", " : "")
+				+ (password != null ? "password=" + password + ", " : "")
+				+ (email != null ? "email=" + email + ", " : "")
+				+ (phoneNumber != null ? "phoneNumber=" + phoneNumber + ", " : "")
+				+ (parentUserId != null ? "parentUserId=" + parentUserId + ", " : "")
+				+ (shopList != null ? "shopList=" + shopList + ", " : "")
+				+ (defaultShopId != null ? "defaultShopId=" + defaultShopId + ", " : "")
+				+ (profileImageUrl != null ? "profileImageUrl=" + profileImageUrl + ", " : "")
+				+ (lastLoginDate != null ? "lastLoginDate=" + lastLoginDate + ", " : "")
+				+ (lastLoginDateDisplay != null ? "lastLoginDateDisplay=" + lastLoginDateDisplay + ", " : "")
+				+ (joinDate != null ? "joinDate=" + joinDate + ", " : "") + (role != null ? "role=" + role + ", " : "")
+				+ (authorities != null ? "authorities=" + Arrays.toString(authorities) + ", " : "") + "isActive="
+				+ isActive + ", isNotLocked=" + isNotLocked + ", "
+				+ (addressLine1 != null ? "addressLine1=" + addressLine1 + ", " : "")
+				+ (addressLine2 != null ? "addressLine2=" + addressLine2 + ", " : "")
+				+ (addressLine3 != null ? "addressLine3=" + addressLine3 + ", " : "")
+				+ (state != null ? "state=" + state + ", " : "") + (pinCode != null ? "pinCode=" + pinCode + ", " : "")
+				+ (remarks != null ? "remarks=" + remarks + ", " : "") + "hasNewMail=" + hasNewMail + ", "
+				+ (roleObject != null ? "roleObject=" + roleObject : "") + "]";
 	}
+
+
+	
 
 }

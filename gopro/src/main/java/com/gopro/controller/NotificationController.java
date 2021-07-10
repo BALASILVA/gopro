@@ -27,13 +27,23 @@ public class NotificationController {
 	public NotificationController(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
+	
+	@PostMapping(value="/compose/new")
+	public ResponseEntity<Notification> sendNotification(@RequestBody Notification notification) {					
+		Notification notifications = notificationService.addNewMessageNotification(notification);				
+		return new ResponseEntity<>(notifications, OK);
+	}
+	
+	@PostMapping(value="/forward")
+	public ResponseEntity<Notification> forwardNotification(@RequestBody Notification notification) {					
+		//Notification notifications = notificationService.addNewMessageNotification(notification);				
+		return new ResponseEntity<>(null, OK);
+	}	
 
 	@PostMapping(value="/all",produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<Notification>> getAllNotification(@RequestBody SearchCredentialDTO searchCredentialDTO) {
-		
-		List<Notification> notifications = notificationService.getAllNotification(searchCredentialDTO);		
-		
-		return new ResponseEntity<>(notifications, OK);
+	public ResponseEntity<List<Notification>> getAllNotification(@RequestBody SearchCredentialDTO searchCredentialDTO) {		
+		List<Notification> notifications = notificationService.getAllNotification(searchCredentialDTO);				
+		return new ResponseEntity<>(notifications, OK);		
 	}
 	
 	@PostMapping(value="/all/refresh")

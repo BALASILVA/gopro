@@ -386,12 +386,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		Long parentUserId  = 0L;
 		
 		if(logInUser.getParentUserId() == PARENT_USER_ID_SUPER_ADMIN)
-		{
 			parentUserId  = logInUser.getId();
-		}
+		else
+			parentUserId = logInUser.getParentUserId();
 		
+		if(parentUserId  == 0L) {
+			//Exception TO be hadled
+			return null;
+		}
 		return userRepository.getUserForSendMail(parentUserId);
 		
 	}
 
+	@Override
+	public boolean haveNewMail() {
+		String logInUserName = authendicationFacade.getCurrentUserName();
+		return userRepository.haveNewMail(logInUserName);
+	}
+	
+
+	@Override	
+	public boolean updateNewMailTrue(List<Long> userId) {	
+		 userRepository.updateNewMailTrue(true,userId);
+		return true;
+		
+	}
+
+	
 }
