@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.OK;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,8 +42,8 @@ public class NotificationController {
 	}	
 
 	@PostMapping(value="/all",produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<Notification>> getAllNotification(@RequestBody SearchCredentialDTO searchCredentialDTO) {		
-		List<Notification> notifications = notificationService.getAllNotification(searchCredentialDTO);				
+	public ResponseEntity<Page<Notification>> getAllNotification(@RequestBody SearchCredentialDTO searchCredentialDTO) {		
+		Page<Notification> notifications = notificationService.getAllNotification(searchCredentialDTO);				
 		return new ResponseEntity<>(notifications, OK);		
 	}
 	

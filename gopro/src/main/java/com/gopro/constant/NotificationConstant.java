@@ -16,6 +16,8 @@ public class NotificationConstant {
 	
 	public static final String NOTIFICATION_MAPPING_TYPE_CC= "CC";
 	
+	public static final String NOTIFICATION_MAPPING_TYPE_REPLYALL_REFERENCE = "REPLYALL_REFERENCE";
+	
 	public static final String NOTIFICATION_MAPPING_TYPE_BCC= "BCC";
 	
 	public static final String NOTIFICATION_TYPE_CREATE_NEW= "CREATE_NEW";

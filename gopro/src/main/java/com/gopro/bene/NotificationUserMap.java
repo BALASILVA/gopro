@@ -3,11 +3,32 @@ package com.gopro.bene;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
+
+import com.gopro.queryconstant.NotificationUserMapQueryConstant;
+
+
+@SqlResultSetMapping(name = "findAllNotificationUserMap", classes = @ConstructorResult(targetClass = com.gopro.bene.NotificationUserMap.class, columns = {
+		@ColumnResult(name = "notificationUserMapId", type = Long.class),
+		@ColumnResult(name = "sendTo", type = Long.class),				
+		@ColumnResult(name = "firstName", type = String.class),
+		@ColumnResult(name = "lastName", type = String.class),
+		@ColumnResult(name = "mappingType", type = String.class),
+		@ColumnResult(name = "isFavorite", type = Boolean.class),
+		@ColumnResult(name = "isReaded", type = Boolean.class),
+		@ColumnResult(name = "readTime", type = Date.class),
+		@ColumnResult(name = "notificationMessageMapId", type = Long.class)
+		}
+))
+@NamedNativeQuery(name = "findAllNotificationUserMap", query = NotificationUserMapQueryConstant.FIND_ALL_NOTIFICATION_USER_MAP_BY_NOTIFICATION_MESSAGEMAP_ID, resultClass = NotificationUserMap.class, resultSetMapping = "findAllNotificationUserMap")
 
 @Entity
 @Table(name = "notificationusermap")
@@ -31,13 +52,13 @@ public class NotificationUserMap {
 	@Column(name = "mappingtype", nullable = false)
 	private String mappingType; 
 	
-	@Column(name = "isfavorite")
+	@Column(name = "isfavorite", columnDefinition = "boolean default false", nullable = false)
 	private boolean isFavorite;
 
-	@Column(name = "isdeleted")
+	@Column(name = "isdeleted", columnDefinition = "boolean default false", nullable = false)
 	private boolean isDeleted;
 
-	@Column(name = "isreaded")
+	@Column(name = "isreaded", columnDefinition = "boolean default false", nullable = false)
 	private boolean isReaded;
 
 	@Column(name = "readtime")
@@ -50,6 +71,24 @@ public class NotificationUserMap {
 		// TODO Auto-generated constructor stub
 	}
 
+	//Dont remove This construct
+	// Customise constrictor For JPA Query START 	
+	public NotificationUserMap(Long notificationUserMapId, Long sendTo, String firstName, String lastName,
+			String mappingType, boolean isFavorite, boolean isReaded, Date readTime, Long notificationMessageMapId) {
+		this.notificationUserMapId = notificationUserMapId;
+		this.sendTo = sendTo;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mappingType = mappingType;
+		this.isFavorite = isFavorite;
+		this.isReaded = isReaded;
+		this.readTime = readTime;
+		this.notificationMessageMapId = notificationMessageMapId;
+	}
+	
+	//Dont remove This construct
+    // Customise constrictor For JPA Query END
+	
 	public NotificationUserMap(Long notificationUserMapId, Long sendTo, String firstName, String lastName,
 			String mappingType, boolean isFavorite, boolean isDeleted, boolean isReaded, Date readTime,
 			Long notificationMessageMapId) {
@@ -106,11 +145,11 @@ public class NotificationUserMap {
 		this.mappingType = mappingType;
 	}
 
-	public boolean isFavorite() {
+	public boolean getIsFavorite() {
 		return isFavorite;
 	}
 
-	public void setFavorite(boolean isFavorite) {
+	public void setIsFavorite(boolean isFavorite) {
 		this.isFavorite = isFavorite;
 	}
 
@@ -122,11 +161,11 @@ public class NotificationUserMap {
 		this.isDeleted = isDeleted;
 	}
 
-	public boolean isReaded() {
+	public boolean getIsReaded() {
 		return isReaded;
 	}
 
-	public void setReaded(boolean isReaded) {
+	public void setIsReaded(boolean isReaded) {
 		this.isReaded = isReaded;
 	}
 

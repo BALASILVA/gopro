@@ -2,6 +2,8 @@ package com.gopro.controller;
 
 import static org.springframework.http.HttpStatus.OK;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,11 +27,23 @@ public class NotificationMessageMapController {
 		this.notificationMessageMapService = notificationMessageMapService;
 	}
 
-
+	@PostMapping(value="/getmessage")
+	public ResponseEntity<List<NotificationMessageMap>> findAllMeesageOfNotificationId(@RequestBody Long notificationId) {
+		List<NotificationMessageMap> notificationMessageMapFromDb = notificationMessageMapService.findAllMeesageOfNotificationId(notificationId);
+		return new ResponseEntity<>(notificationMessageMapFromDb, OK);
+	}
 
 	@PostMapping(value="/reply")
 	public ResponseEntity<NotificationMessageMap> replyNotification(@RequestBody NotificationMessageMap notificationMessageMap) {
 		NotificationMessageMap notificationMessageMapFromDb = notificationMessageMapService.addNewnotificationMessageMap(notificationMessageMap);				
 		return new ResponseEntity<>(notificationMessageMapFromDb, OK);
 	}
+	
+	@PostMapping(value="/deleteall")
+	public ResponseEntity<Boolean> deleteAllMessage(@RequestBody Long notificationId) {
+		boolean isDeleted = notificationMessageMapService.deleteAllMessage(notificationId);
+		return new ResponseEntity<>(isDeleted, OK);
+	}
+	
 }
+

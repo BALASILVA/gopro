@@ -1,5 +1,6 @@
 package com.gopro.service;
 
+
 import com.gopro.bene.Role;
 import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.bene.Shop;
@@ -7,7 +8,6 @@ import com.gopro.bene.User;
 import com.gopro.exception.domain.EmailExistException;
 import com.gopro.exception.domain.UserNotFoundException;
 import com.gopro.exception.domain.UsernameExistException;
-import com.gopro.repository.UserRepository.UserIdAndUserName;
 
 import java.util.List;
 
@@ -44,6 +44,7 @@ public interface UserService {
 	boolean haveNewMail();
 
 	boolean updateNewMailTrue(List<Long> userId);
-    
+
+	boolean updateNewMailFalse(Long userId);
     
 }

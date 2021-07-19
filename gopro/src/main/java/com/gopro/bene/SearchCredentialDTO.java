@@ -10,13 +10,14 @@ public class SearchCredentialDTO {
 	private int page;
 	private int size;
 	private String searchKeyWord;
-	private String fromDate;
-	private String toDate;
+	private Date fromDate;
+	private Date toDate;
 	private String shortBy;
 	private String shortOrderAscOrDsc;
 	private String moduleName;
 	private boolean isActive;
 	private boolean isNotLocked;
+	private boolean isManualTrriger;
 
 	// User Module
 	private Long Id;
@@ -94,18 +95,19 @@ public class SearchCredentialDTO {
 	public SearchCredentialDTO() {
 	}
 
-	public SearchCredentialDTO(int page, int size, String searchKeyWord, String fromDate, String toDate, String shortBy,
-			String shortOrderAscOrDsc, String moduleName, boolean isActive, boolean isNotLocked, Long id, String userId,
-			String username, String firstName, String email, String phoneNumber, Long parentUserId, Long defaultShopId,
-			Long productId, String productName, Long price, Long startPrice, Long endPrice, Long availableStock,
-			Long startAvailableStock, Long endAvailableStock, Long totalSale, Long startTotalSale, Long endTotalSale,
-			Date lastLoadDate, Date startLastLoadDate, Date endLastLoadDate, Long shopId, String shopName,
-			String addressLineOne, String addressLineTwo, String addressLineThree, String district, String state,
-			String pinCode, Long invoiceId, Long customerMobileNo, int noOfProduct, Double totalPrice,
-			String paymentType, String userName2, String remarks, Long notificationId, String notificationType,
-			String subject, boolean isSystemGenerated, Date notificationLatUpdateDate, Long notificationMessageMapId,
-			Long sendFrom, String message, Date time, Long notificationUserMapId, String mappingType, Long sendTo,
-			boolean isFavorite, boolean isDeleted, boolean isReaded, Date readTime, int roleId, String roleName) {
+	public SearchCredentialDTO(int page, int size, String searchKeyWord, Date fromDate, Date toDate, String shortBy,
+			String shortOrderAscOrDsc, String moduleName, boolean isActive, boolean isNotLocked,
+			boolean isManualTrriger, Long id, String userId, String username, String firstName, String email,
+			String phoneNumber, Long parentUserId, Long defaultShopId, Long productId, String productName, Long price,
+			Long startPrice, Long endPrice, Long availableStock, Long startAvailableStock, Long endAvailableStock,
+			Long totalSale, Long startTotalSale, Long endTotalSale, Date lastLoadDate, Date startLastLoadDate,
+			Date endLastLoadDate, Long shopId, String shopName, String addressLineOne, String addressLineTwo,
+			String addressLineThree, String district, String state, String pinCode, Long invoiceId,
+			Long customerMobileNo, int noOfProduct, Double totalPrice, String paymentType, String userName2,
+			String remarks, Long notificationId, String notificationType, String subject, boolean isSystemGenerated,
+			Date notificationLatUpdateDate, Long notificationMessageMapId, Long sendFrom, String message, Date time,
+			Long notificationUserMapId, String mappingType, Long sendTo, boolean isFavorite, boolean isDeleted,
+			boolean isReaded, Date readTime, int roleId, String roleName) {
 		super();
 		this.page = page;
 		this.size = size;
@@ -117,6 +119,7 @@ public class SearchCredentialDTO {
 		this.moduleName = moduleName;
 		this.isActive = isActive;
 		this.isNotLocked = isNotLocked;
+		this.isManualTrriger = isManualTrriger;
 		Id = id;
 		this.userId = userId;
 		this.username = username;
@@ -198,19 +201,19 @@ public class SearchCredentialDTO {
 		this.searchKeyWord = searchKeyWord;
 	}
 
-	public String getFromDate() {
+	public Date getFromDate() {
 		return fromDate;
 	}
 
-	public void setFromDate(String fromDate) {
+	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
 
-	public String getToDate() {
+	public Date getToDate() {
 		return toDate;
 	}
 
-	public void setToDate(String toDate) {
+	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
 
@@ -252,6 +255,14 @@ public class SearchCredentialDTO {
 
 	public void setNotLocked(boolean isNotLocked) {
 		this.isNotLocked = isNotLocked;
+	}
+
+	public boolean getIsManualTrriger() {
+		return isManualTrriger;
+	}
+
+	public void setIsManualTrriger(boolean isManualTrriger) {
+		this.isManualTrriger = isManualTrriger;
 	}
 
 	public Long getId() {
@@ -696,29 +707,62 @@ public class SearchCredentialDTO {
 
 	@Override
 	public String toString() {
-		return "SearchCredentialDTO [page=" + page + ", size=" + size + ", searchKeyWord=" + searchKeyWord
-				+ ", fromDate=" + fromDate + ", toDate=" + toDate + ", shortBy=" + shortBy + ", shortOrderAscOrDsc="
-				+ shortOrderAscOrDsc + ", moduleName=" + moduleName + ", isActive=" + isActive + ", isNotLocked="
-				+ isNotLocked + ", Id=" + Id + ", userId=" + userId + ", username=" + username + ", firstName="
-				+ firstName + ", email=" + email + ", phoneNumber=" + phoneNumber + ", parentUserId=" + parentUserId
-				+ ", defaultShopId=" + defaultShopId + ", productId=" + productId + ", productName=" + productName
-				+ ", price=" + price + ", startPrice=" + startPrice + ", endPrice=" + endPrice + ", availableStock="
-				+ availableStock + ", startAvailableStock=" + startAvailableStock + ", endAvailableStock="
-				+ endAvailableStock + ", totalSale=" + totalSale + ", startTotalSale=" + startTotalSale
-				+ ", endTotalSale=" + endTotalSale + ", lastLoadDate=" + lastLoadDate + ", startLastLoadDate="
-				+ startLastLoadDate + ", endLastLoadDate=" + endLastLoadDate + ", shopId=" + shopId + ", shopName="
-				+ shopName + ", addressLineOne=" + addressLineOne + ", addressLineTwo=" + addressLineTwo
-				+ ", addressLineThree=" + addressLineThree + ", district=" + district + ", state=" + state
-				+ ", pinCode=" + pinCode + ", invoiceId=" + invoiceId + ", customerMobileNo=" + customerMobileNo
-				+ ", noOfProduct=" + noOfProduct + ", totalPrice=" + totalPrice + ", paymentType=" + paymentType
-				+ ", userName=" + userName + ", remarks=" + remarks + ", notificationId=" + notificationId
-				+ ", notificationType=" + notificationType + ", Subject=" + Subject + ", isSystemGenerated="
-				+ isSystemGenerated + ", notificationLatUpdateDate=" + notificationLatUpdateDate
-				+ ", notificationMessageMapId=" + notificationMessageMapId + ", sendFrom=" + sendFrom + ", message="
-				+ message + ", time=" + time + ", NotificationUserMapId=" + NotificationUserMapId + ", mappingType="
-				+ mappingType + ", sendTo=" + sendTo + ", isFavorite=" + isFavorite + ", isDeleted=" + isDeleted
-				+ ", isReaded=" + isReaded + ", readTime=" + readTime + ", roleId=" + roleId + ", roleName=" + roleName
-				+ "]";
+		return "SearchCredentialDTO [page=" + page + ", size=" + size + ", "
+				+ (searchKeyWord != null ? "searchKeyWord=" + searchKeyWord + ", " : "")
+				+ (fromDate != null ? "fromDate=" + fromDate + ", " : "")
+				+ (toDate != null ? "toDate=" + toDate + ", " : "")
+				+ (shortBy != null ? "shortBy=" + shortBy + ", " : "")
+				+ (shortOrderAscOrDsc != null ? "shortOrderAscOrDsc=" + shortOrderAscOrDsc + ", " : "")
+				+ (moduleName != null ? "moduleName=" + moduleName + ", " : "") + "isActive=" + isActive
+				+ ", isNotLocked=" + isNotLocked + ", isManualTrriger=" + isManualTrriger + ", "
+				+ (Id != null ? "Id=" + Id + ", " : "") + (userId != null ? "userId=" + userId + ", " : "")
+				+ (username != null ? "username=" + username + ", " : "")
+				+ (firstName != null ? "firstName=" + firstName + ", " : "")
+				+ (email != null ? "email=" + email + ", " : "")
+				+ (phoneNumber != null ? "phoneNumber=" + phoneNumber + ", " : "")
+				+ (parentUserId != null ? "parentUserId=" + parentUserId + ", " : "")
+				+ (defaultShopId != null ? "defaultShopId=" + defaultShopId + ", " : "")
+				+ (productId != null ? "productId=" + productId + ", " : "")
+				+ (productName != null ? "productName=" + productName + ", " : "")
+				+ (price != null ? "price=" + price + ", " : "")
+				+ (startPrice != null ? "startPrice=" + startPrice + ", " : "")
+				+ (endPrice != null ? "endPrice=" + endPrice + ", " : "")
+				+ (availableStock != null ? "availableStock=" + availableStock + ", " : "")
+				+ (startAvailableStock != null ? "startAvailableStock=" + startAvailableStock + ", " : "")
+				+ (endAvailableStock != null ? "endAvailableStock=" + endAvailableStock + ", " : "")
+				+ (totalSale != null ? "totalSale=" + totalSale + ", " : "")
+				+ (startTotalSale != null ? "startTotalSale=" + startTotalSale + ", " : "")
+				+ (endTotalSale != null ? "endTotalSale=" + endTotalSale + ", " : "")
+				+ (lastLoadDate != null ? "lastLoadDate=" + lastLoadDate + ", " : "")
+				+ (startLastLoadDate != null ? "startLastLoadDate=" + startLastLoadDate + ", " : "")
+				+ (endLastLoadDate != null ? "endLastLoadDate=" + endLastLoadDate + ", " : "")
+				+ (shopId != null ? "shopId=" + shopId + ", " : "")
+				+ (shopName != null ? "shopName=" + shopName + ", " : "")
+				+ (addressLineOne != null ? "addressLineOne=" + addressLineOne + ", " : "")
+				+ (addressLineTwo != null ? "addressLineTwo=" + addressLineTwo + ", " : "")
+				+ (addressLineThree != null ? "addressLineThree=" + addressLineThree + ", " : "")
+				+ (district != null ? "district=" + district + ", " : "")
+				+ (state != null ? "state=" + state + ", " : "") + (pinCode != null ? "pinCode=" + pinCode + ", " : "")
+				+ (invoiceId != null ? "invoiceId=" + invoiceId + ", " : "")
+				+ (customerMobileNo != null ? "customerMobileNo=" + customerMobileNo + ", " : "") + "noOfProduct="
+				+ noOfProduct + ", " + (totalPrice != null ? "totalPrice=" + totalPrice + ", " : "")
+				+ (paymentType != null ? "paymentType=" + paymentType + ", " : "")
+				+ (userName != null ? "userName=" + userName + ", " : "")
+				+ (remarks != null ? "remarks=" + remarks + ", " : "")
+				+ (notificationId != null ? "notificationId=" + notificationId + ", " : "")
+				+ (notificationType != null ? "notificationType=" + notificationType + ", " : "")
+				+ (Subject != null ? "Subject=" + Subject + ", " : "") + "isSystemGenerated=" + isSystemGenerated + ", "
+				+ (notificationLatUpdateDate != null ? "notificationLatUpdateDate=" + notificationLatUpdateDate + ", "
+						: "")
+				+ (notificationMessageMapId != null ? "notificationMessageMapId=" + notificationMessageMapId + ", "
+						: "")
+				+ (sendFrom != null ? "sendFrom=" + sendFrom + ", " : "")
+				+ (message != null ? "message=" + message + ", " : "") + (time != null ? "time=" + time + ", " : "")
+				+ (NotificationUserMapId != null ? "NotificationUserMapId=" + NotificationUserMapId + ", " : "")
+				+ (mappingType != null ? "mappingType=" + mappingType + ", " : "")
+				+ (sendTo != null ? "sendTo=" + sendTo + ", " : "") + "isFavorite=" + isFavorite + ", isDeleted="
+				+ isDeleted + ", isReaded=" + isReaded + ", " + (readTime != null ? "readTime=" + readTime + ", " : "")
+				+ "roleId=" + roleId + ", " + (roleName != null ? "roleName=" + roleName : "") + "]";
 	}
 
 }

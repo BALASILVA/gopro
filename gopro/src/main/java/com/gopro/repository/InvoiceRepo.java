@@ -1,6 +1,8 @@
 package com.gopro.repository;
 
 
+import java.util.Date;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +19,7 @@ public interface InvoiceRepo extends PagingAndSortingRepository<Invoice, Long> {
 			@Param("invoiceId") Long invoiceId,
 			@Param("customerMobileNo") Long customerMobileNo,
 			@Param("noOfProduct") Long noOfProduct, @Param("startPrice") Long startPrice,
-			@Param("endPrice") Long endPrice, @Param("fromDate") String fromDate, @Param("toDate") String toDate,
+			@Param("endPrice") Long endPrice, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
 			@Param("paymentType") String paymentType, @Param("username") String username,
 			@Param("searchKeyWord") String searchKeyWord, @Param("shopId") Long shopId,Pageable pageable);
 

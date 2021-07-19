@@ -2,10 +2,14 @@ package com.gopro.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,10 +17,12 @@ import org.springframework.stereotype.Service;
 import com.gopro.AuthendicationFacade.AuthendicationFacade;
 import com.gopro.bene.Invoice;
 import com.gopro.bene.Notification;
+import com.gopro.bene.NotificationDetail;
 import com.gopro.bene.NotificationMessageMap;
 import com.gopro.bene.NotificationUserMap;
 import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.bene.User;
+import com.gopro.constant.NotificationConstant;
 import com.gopro.repository.NotificationRepo;
 import com.gopro.service.NotificationService;
 import static com.gopro.constant.NotificationConstant.*;
@@ -28,13 +34,19 @@ public class NotificationServiceImpl implements NotificationService {
 	private AuthendicationFacade authendicationFacade;
 	private NotificationRepo notificationRepo;
 	private UserService userService;
+	private NotificationMessageMapService notificationMessageMapService;
+	private NotificationDetailService notificationDetailService;
 
 	@Autowired
 	public NotificationServiceImpl(NotificationRepo notificationRepo, UserService userService,
-			AuthendicationFacade authendicationFacade) {
+			AuthendicationFacade authendicationFacade,
+			@Lazy NotificationMessageMapService notificationMessageMapService,
+			NotificationDetailService notificationDetailService) {
 		this.notificationRepo = notificationRepo;
 		this.userService = userService;
 		this.authendicationFacade = authendicationFacade;
+		this.notificationMessageMapService = notificationMessageMapService;
+		this.notificationDetailService = notificationDetailService;
 	}
 
 	@Override
@@ -44,8 +56,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 	// Compose New Mail
 	@Override
-	public Notification addNewMessageNotification(Notification notification) {				
-		User logedInUser = authendicationFacade.getCurrentUserDetails();		
+	public Notification addNewMessageNotification(Notification notification) {
+		User logedInUser = authendicationFacade.getCurrentUserDetails();
 
 		// set notification detail
 		notification.setInvoiceId(LONG_ZERO);
@@ -55,62 +67,76 @@ public class NotificationServiceImpl implements NotificationService {
 		notification.setNotificationStartData(new Date());
 
 		notification.setNotificationLatUpdateDate(new Date());
-
+		
+		Set<Long> userIdToThisMail = new HashSet<Long>();
+		
+		
 		// Set message details
 		List<NotificationMessageMap> notificationMessageMapList = notification.getNotificationMessageMap();
 		for (NotificationMessageMap messageObj : notificationMessageMapList) {
 			if (messageObj.getNotificationMessageMapId() == NULL) {
+				messageObj.setParentNotificationMessageMapId(LONG_ZERO);
 				messageObj.setSendFrom(logedInUser.getId());
-				messageObj.setTime(new Date());
+				messageObj.setTime(new Date());				
 			}
+			NotificationUserMap notificationUserMapObj = new NotificationUserMap();
+			notificationUserMapObj.setSendTo(logedInUser.getId());
+			notificationUserMapObj.setMappingType(NotificationConstant.NOTIFICATION_MAPPING_TYPE_FROM);
+			messageObj.getNotificationUserMap().add(notificationUserMapObj);
+			
+			for(NotificationUserMap usrMapObj : messageObj.getNotificationUserMap())
+				userIdToThisMail.add(usrMapObj.getSendTo());
+			userIdToThisMail.add(logedInUser.getId());
 		}
-
-		return notificationRepo.save(notification);
+				
+		Notification savedNotification =  notificationRepo.save(notification);
+		notificationDetailService.updateNotificationDetail(userIdToThisMail,savedNotification.getNotificationId());
+		
+		return savedNotification;
 	}
 
 	// Search Page
 	@Override
-	public List<Notification> getAllNotification(SearchCredentialDTO searchCredentialDTO) {
-		User logedInUser = authendicationFacade.getCurrentUserDetails();
-		System.out.println(searchCredentialDTO);
-		Pageable pageable = null;
-
-		if (searchCredentialDTO.getSize() == 0 || searchCredentialDTO.getSize() <= 0) {
-			searchCredentialDTO.setSize(100);
-		}
-		pageable = PageRequest.of(searchCredentialDTO.getPage(), searchCredentialDTO.getSize());
-
-		if (StringUtils.isEmpty(searchCredentialDTO.getSearchKeyWord())) {
-			searchCredentialDTO.setSearchKeyWord("");
-		}
-
-		searchCredentialDTO.setSearchKeyWord("%" + searchCredentialDTO.getSearchKeyWord() + "%");
+	public Page<Notification> getAllNotification(SearchCredentialDTO searchCredentialDTO) {
+		System.out.println(searchCredentialDTO.getIsManualTrriger());
 
 		try {
+			
 
-			boolean isDataUpdateAfterSearch = true;
-			System.out.println(searchCredentialDTO.getNotificationLatUpdateDate());
-			if (searchCredentialDTO.getNotificationLatUpdateDate() != null) {
-				Integer count = notificationRepo.getUpdateAllNotification(logedInUser.getId(),
+			if (userService.haveNewMail() || searchCredentialDTO.getIsManualTrriger()) {								
+				User logedInUser = authendicationFacade.getCurrentUserDetails();
+				userService.updateNewMailFalse(logedInUser.getId());
+				
+				Pageable pageable = null;															
+				pageable = PageRequest.of(searchCredentialDTO.getPage(), 10); //Always 10 item per page
+				if (StringUtils.isEmpty(searchCredentialDTO.getSearchKeyWord())) {
+					searchCredentialDTO.setSearchKeyWord("");
+				}
+				searchCredentialDTO.setSearchKeyWord("%" + searchCredentialDTO.getSearchKeyWord() + "%");
+				
+				System.out.println(searchCredentialDTO.getSendFrom()+ " "+ searchCredentialDTO.getSendTo()+" "+
+						searchCredentialDTO.getFromDate()+" "+searchCredentialDTO.getToDate() +" "+						
+						searchCredentialDTO.getSearchKeyWord()+" "+searchCredentialDTO.getSubject());
+				
+				Page<Notification> notificationSearchResult = notificationRepo.getAllNotifications(logedInUser.getId(),
 						searchCredentialDTO.getSendFrom(), searchCredentialDTO.getSendTo(),
-						searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),
-						searchCredentialDTO.isFavorite(), searchCredentialDTO.isReaded(),
-						searchCredentialDTO.getSearchKeyWord(), searchCredentialDTO.getNotificationLatUpdateDate());
-				System.out.println("CHEING UPDATE " + count);
-				System.out.println("CHEING UPDATE " + (Integer) count);
-				if ((Integer) count > 0)
-					isDataUpdateAfterSearch = true;
-				else
-					isDataUpdateAfterSearch = false;
-			}
-
-			if (isDataUpdateAfterSearch)
-				return notificationRepo.getAllNotifications(logedInUser.getId(), searchCredentialDTO.getSendFrom(),
-						searchCredentialDTO.getSendTo(), searchCredentialDTO.getFromDate(),
-						searchCredentialDTO.getToDate(), searchCredentialDTO.isFavorite(),
-						searchCredentialDTO.isReaded(), searchCredentialDTO.getSearchKeyWord(), pageable);
-			else
+						searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),						
+						searchCredentialDTO.getSearchKeyWord(), pageable);
+				
+				for (Notification notification : notificationSearchResult.getContent()) {
+					List<NotificationDetail> notificationDetail = notificationDetailService.getNotificationDetail(logedInUser.getId(),notification.getNotificationId());
+					List<NotificationMessageMap> notificationMessage = notificationMessageMapService
+							.findLastMeesageOfNotificationId(notification, logedInUser);
+					notification.setNotificationDetail(notificationDetail);
+					notification.setNotificationMessageMap(notificationMessage);
+				}
+				System.out.println("search res"+notificationSearchResult.getSize());
+				System.out.println("search res"+notificationSearchResult);
+				return notificationSearchResult;
+			} else {
+				// Need to retur Stats of all are update in response entity
 				return null;
+			}
 
 		} catch (Exception ex) {
 			System.out.println("Exception" + ex);
@@ -143,7 +169,8 @@ public class NotificationServiceImpl implements NotificationService {
 		notification.setNotificationLatUpdateDate(new Date());
 		// Set message details
 		List<NotificationMessageMap> notificationMessageMapList = notification.getNotificationMessageMap();
-		NotificationMessageMap notificationMessageMap = new NotificationMessageMap();
+		NotificationMessageMap notificationMessageMap = new NotificationMessageMap();		
+		notificationMessageMap.setParentNotificationMessageMapId(LONG_ZERO);		
 		notificationMessageMap.setSendFrom(logedInUser.getId());
 		notificationMessageMap
 				.setMessage("Inoice Id " + invoice.getInvoiceId() + " is reprinted by " + logedInUser.getUserId());
@@ -156,12 +183,15 @@ public class NotificationServiceImpl implements NotificationService {
 		for (User user : users) {
 			NotificationUserMap notificationUserMap = new NotificationUserMap();
 			notificationUserMap.setSendTo(user.getId());
-			notificationUserMap.setFavorite(false);
 			notificationUserMap.setMappingType(NOTIFICATION_TYPE_REPRINT);
-			notificationUserMap.setReaded(false);
-			notificationUserMap.setDeleted(false);
 			notificationUserMapList.add(notificationUserMap);
 		}
+		
+		NotificationUserMap notificationUserMapObj = new NotificationUserMap();
+		notificationUserMapObj.setSendTo(logedInUser.getId());
+		notificationUserMapObj.setMappingType(NotificationConstant.NOTIFICATION_MAPPING_TYPE_FROM);
+		notificationUserMapList.add(notificationUserMapObj);
+		
 		notificationMessageMap.setNotificationUserMap(notificationUserMapList);
 		notification.setNotificationMessageMap(notificationMessageMapList);
 		notificationRepo.save(notification);
@@ -171,11 +201,11 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public boolean updateLastUpdateTimeDate(Long notificationId) {
-		if(notificationId == null || notificationId==0)
-			return false;		
-		int count = notificationRepo.updateLastUpdateTimeDate(new Date(),notificationId);
-		System.out.println("Time Update"+count);
-		return count>0;
+		if (notificationId == null || notificationId == 0)
+			return false;
+		int count = notificationRepo.updateLastUpdateTimeDate(new Date(), notificationId);
+		System.out.println("Time Update" + count);
+		return count > 0;
 	}
 
 }

@@ -2,8 +2,8 @@ package com.gopro.service;
 
 
 import com.gopro.AuthendicationFacade.AuthendicationFacade;
+
 import com.gopro.bene.Authority;
-import com.gopro.bene.Product;
 import com.gopro.bene.Role;
 import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.bene.Shop;
@@ -15,7 +15,6 @@ import com.gopro.exception.domain.EmailExistException;
 import com.gopro.exception.domain.UserNotFoundException;
 import com.gopro.exception.domain.UsernameExistException;
 import com.gopro.repository.UserRepository;
-import com.gopro.repository.UserRepository.UserIdAndUserName;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -410,6 +409,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		 userRepository.updateNewMailTrue(true,userId);
 		return true;
 		
+	}
+
+	@Override
+	public boolean updateNewMailFalse(Long userId) {
+		 userRepository.updateNewMailFalse(false,userId);
+		 return true;
 	}
 
 	

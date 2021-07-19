@@ -30,11 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value = "update user set defaultshopid=:shopid where id=:userid", nativeQuery = true)
 	void updateDefaultShopId(@Param("shopid") Long shopid, @Param("userid") Long userid);
 
-	public static interface UserIdAndUserName {
-		public Long userId();
-
-		public String userName();
-	}
 
 	@Query(value = "select * from user usr where ( usr.parentUserId = :parentUserId OR usr.id = :parentUserId) AND usr.roleId in :roleId", nativeQuery = true)
 	List<User> getUserForReprintNotification(@Param("parentUserId") Long parentUserId,
@@ -49,5 +44,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Modifying
 	@Query(value = "update user set hasnewmail=:value where id in :userId", nativeQuery = true)
 	void updateNewMailTrue(@Param("value") boolean value,@Param("userId")List<Long> userId );
+	
+	@Modifying
+	@Query(value = "update user set hasnewmail=:value where id = :userId", nativeQuery = true)
+	void updateNewMailFalse(@Param("value") boolean value,@Param("userId")Long userId );
+
 
 }

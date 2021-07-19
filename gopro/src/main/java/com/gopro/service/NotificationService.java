@@ -1,6 +1,6 @@
 package com.gopro.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.gopro.bene.Invoice;
 import com.gopro.bene.Notification;
@@ -12,7 +12,7 @@ public interface NotificationService {
 
 	public Notification sendReprintNotification(Invoice invoice);
 
-	public List<Notification> getAllNotification(SearchCredentialDTO searchCredentialDTO);
+	public Page<Notification> getAllNotification(SearchCredentialDTO searchCredentialDTO);
 
 	public boolean getUpdateAllNotification(SearchCredentialDTO searchCredentialDTO);
 

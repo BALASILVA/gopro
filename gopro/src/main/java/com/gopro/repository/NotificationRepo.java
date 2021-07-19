@@ -1,27 +1,27 @@
 package com.gopro.repository;
 
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.gopro.bene.Notification;
 import static com.gopro.queryconstant.QueryConstant.*;
 
-public interface NotificationRepo extends JpaRepository<Notification, Long> {
+public interface NotificationRepo extends PagingAndSortingRepository<Notification, Long> {
 
 	@Query(value = FIND_NOTIFICATION_BY_INVOICE_ID, nativeQuery = true)
 	Notification findNotificationByInvoiceId(@Param("invoiceId") Long invoiceId);
 
-	@Query(value = FIND_ALL_NOTIFICATION_SEARCH, nativeQuery = true)
-	List<Notification> getAllNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
-			@Param("sendTo") Long sendTo, @Param("fromDate") String fromDate, @Param("toDate") String toDate,
-			@Param("isFavorite") boolean isFavorite, @Param("isReaded") boolean isReaded,
+	@Query(name = "findAllNotification")
+	Page<Notification> getAllNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
+			@Param("sendTo") Long sendTo, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
 			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
 	@Query(value = COUNT_NOTIFICATION_AFTER__SEARCH, nativeQuery = true)
