@@ -2,6 +2,8 @@ package com.gopro.controller;
 
 import static org.springframework.http.HttpStatus.OK;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,4 +37,17 @@ public class NotificationUserMapController {
 		boolean isDeleted =  notificationUserMapService.deletMessage(messageId);
 		return new ResponseEntity<>(isDeleted, OK);
 	}
+	
+	@PostMapping(value="/updatereaded")
+	public ResponseEntity<Boolean> updateReadMessageTrue(@RequestBody List<Long> notificationId) {
+		boolean isUpdated =  notificationUserMapService.updateReadMessageFlag(notificationId , true);
+		return new ResponseEntity<>(isUpdated, OK);
+	}
+	
+	@PostMapping(value="/updateunread")
+	public ResponseEntity<Boolean> updateReadMessageFalse(@RequestBody List<Long> notificationId) {
+		boolean isUpdated =  notificationUserMapService.updateReadMessageFlag(notificationId , false);
+		return new ResponseEntity<>(isUpdated, OK);
+	}
+	
 }

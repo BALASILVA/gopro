@@ -29,10 +29,17 @@ public class NotificationDetailController {
 		this.notificationDetailService.toogleFavNotification(notificationId);
 	}
 	
-	@PostMapping(value = "/togglefavnotificationbulk")
-	public void toogleFavNotificationInBulk(@RequestBody List<Long> notificationIdList)
+	@PostMapping(value = "/addfavnotificationbulk")
+	public void addFavNotificationInBulk(@RequestBody List<Long> notificationIdList)
 	{
-		this.notificationDetailService.makeFavNotificationInBulk(notificationIdList);
+		this.notificationDetailService.makeFavNotificationInBulk(notificationIdList,true);
+	}
+	
+	
+	@PostMapping(value = "/removefavnotificationbulk")
+	public void removeFavNotificationInBulk(@RequestBody List<Long> notificationIdList)
+	{
+		this.notificationDetailService.makeFavNotificationInBulk(notificationIdList,false);
 	}
 	
 	@PostMapping(value = "/toggleimportant")
@@ -41,11 +48,16 @@ public class NotificationDetailController {
 		this.notificationDetailService.toggleImportantNotification(notificationId);
 	}
 	
-	@PostMapping(value = "/toggleimportantbulk")
-	public void toggleImportantNotificationInBulk(@RequestBody List<Long> notificationIdList)
+	@PostMapping(value = "/addimportantbulk")
+	public void addImportantNotificationInBulk(@RequestBody List<Long> notificationIdList)
 	{
-		this.notificationDetailService.makeImportantNotificationInBulk(notificationIdList);
+		this.notificationDetailService.makeImportantNotificationInBulk(notificationIdList,true);
 	}
 	
+	@PostMapping(value = "/removeimportantbulk")
+	public void toggleImportantNotificationInBulk(@RequestBody List<Long> notificationIdList)
+	{
+		this.notificationDetailService.makeImportantNotificationInBulk(notificationIdList,false);
+	}
 	
 }

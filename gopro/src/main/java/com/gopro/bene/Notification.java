@@ -29,6 +29,15 @@ import com.gopro.queryconstant.QueryConstant;
 // Need to create one more filed constructor with above fields
 @NamedNativeQuery(name = "findAllNotification", query = QueryConstant.FIND_ALL_NOTIFICATION_SEARCH, resultClass = Notification.class, resultSetMapping = "findAllNotification")
 
+@SqlResultSetMapping(name = "findNotificationById", classes = @ConstructorResult(targetClass = com.gopro.bene.Notification.class, columns = {
+		@ColumnResult(name = "notificationId", type = Long.class),
+		@ColumnResult(name = "notificationType", type = String.class),
+		@ColumnResult(name = "Subject", type = String.class),
+		@ColumnResult(name = "notificationStartData", type = Date.class),
+		@ColumnResult(name = "notificationLatUpdateDate", type = Date.class) }))
+// Need to create one more filed constructor with above fields
+@NamedNativeQuery(name = "findNotificationById", query = QueryConstant.FIND_NOTIFICATION_NOTIFICATIONID , resultClass = Notification.class, resultSetMapping = "findNotificationById")
+
 @Entity
 @Table(name = "notification")
 public class Notification {

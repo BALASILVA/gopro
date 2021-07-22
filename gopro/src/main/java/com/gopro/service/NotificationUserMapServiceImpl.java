@@ -66,8 +66,10 @@ public class NotificationUserMapServiceImpl implements NotificationUserMapServic
 		List<NotificationUserMap> listOfUserMapToSave = new ArrayList<NotificationUserMap>();
 		if(listOfFilterUser.size() != 0)
 		{
-			List<NotificationMessageMap> notificationMessageId = notificationMessageMapService.findAllMessageIdFromNotificationId(notificationMessageMap.getNotificationId());
-			
+			//List<NotificationMessageMap> notificationMessageId = notificationMessageMapService.findAllMessageIdFromNotificationId(notificationMessageMap.getNotificationId());
+			System.out.println("try to det parent msg id"+notificationMessageMap.getNotificationMessageMapId());
+			List<NotificationMessageMap> notificationMessageId = notificationMessageMapService.findAllParentMessageIdOfMessageId(notificationMessageMap.getNotificationMessageMapId());
+			System.out.println(notificationMessageId.toString());
 			for (NotificationUserMap user : listOfFilterUser) {
 				for (NotificationMessageMap messageobj : notificationMessageId) {	
 					NotificationUserMap notificationUserMap = new NotificationUserMap();
@@ -116,9 +118,16 @@ public class NotificationUserMapServiceImpl implements NotificationUserMapServic
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean deletMessage(Long messageId) {
 		User logedInUser = authendicationFacade.getCurrentUserDetails();
-		System.out.println("Deleting Message");
 		int count = notificationUserMapRepo.deletMessage(logedInUser.getId(),messageId);
 		System.out.println(count);
+		return true;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public boolean updateReadMessageFlag(List<Long> notificationId, boolean isReaded) {
+		User logedInUser = authendicationFacade.getCurrentUserDetails();
+		int count = notificationUserMapRepo.updateReadMessageFlag(notificationId,logedInUser.getId(),isReaded);
 		return true;
 	}
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,23 +82,38 @@ public class NotificationMessageMapServiceImpl implements NotificationMessageMap
 		boolean updateResult = notificationService.updateLastUpdateTimeDate(notificationMessageMap.getNotificationId());
 		boolean isNewMessageStatusUpdated = userService.updateNewMailTrue(userIdList);
 
-		return notificationMessageMapSaved;
+		return findDetailedMeesageOfNotificationMessageId(logedInUser.getId(),notificationMessageMapSaved);
 	}
 
+	public NotificationMessageMap findDetailedMeesageOfNotificationMessageId(Long userId , NotificationMessageMap notificationMessage) {
+		
+		NotificationMessageMap notificationMessageMapFromDb = notificationMessageMapRepo.findMessageByMessageId(userId,notificationMessage.getNotificationMessageMapId()); 
+		
+		List<NotificationUserMap> notificationUserMap = notificationUserMapService.findAllMapedUserByMeesageMapId(notificationMessageMapFromDb.getNotificationMessageMapId());
+		
+		notificationMessageMapFromDb.setNotificationUserMap(notificationUserMap);
+		
+		return notificationMessageMapFromDb;
+		
+	}
 	@Override
 	public List<NotificationMessageMap> findLastMeesageOfNotificationId(Notification notification, User logInUser) {
 		List<NotificationMessageMap> notificationMessageMap = notificationMessageMapRepo
 				.findLastMeesageOfNotificationId(notification.getNotificationId(), logInUser.getId());
+		for(NotificationMessageMap notificationMessage:notificationMessageMap)
+		{
+			List<NotificationUserMap> notificationUserMap = notificationUserMapService.findAllMapedUserByMeesageMapId(notificationMessage.getNotificationMessageMapId());
+			notificationMessage.setNotificationUserMap(notificationUserMap);
+		}
+		
 		return notificationMessageMap;
 	}
 
 	@Override
-	public List<NotificationMessageMap> findAllMeesageOfNotificationId(Long notificationId) {
-		
-		User logedInUser = authendicationFacade.getCurrentUserDetails();
-		System.out.println("Searchinf heraonly ");		
+	public List<NotificationMessageMap> findAllMeesageOfNotificationId(Long userId , Long notificationId) {
+						
 		List<NotificationMessageMap> notificationMessageMap = notificationMessageMapRepo
-				.findAllMeesageOfNotificationId(notificationId, logedInUser.getId());
+				.findAllMeesageOfNotificationId(notificationId, userId);
 		List<Long> notificationMessageIdList = new ArrayList<Long>();
 		
 		for (NotificationMessageMap notificationMessage : notificationMessageMap) {
@@ -105,9 +121,10 @@ public class NotificationMessageMapServiceImpl implements NotificationMessageMap
 			notificationMessage.setNotificationUserMap(notificationUserMap);
 			notificationMessageIdList.add(notificationMessage.getNotificationMessageMapId());
 		}
-		updateReadedFlag(notificationMessageIdList,logedInUser.getId());
+		updateReadedFlag(notificationMessageIdList,userId);
 		return notificationMessageMap;
-	}
+	}	
+	
 
 	public boolean updateReadedFlag(List<Long> notificationMessageIdList,Long userId)
 	{
@@ -121,14 +138,31 @@ public class NotificationMessageMapServiceImpl implements NotificationMessageMap
 				.findAllMessageIdOfNotificationId(notificationId);
 	}
 
+	
+	@Override
+	public List<NotificationMessageMap> findAllParentMessageIdOfMessageId(Long notificationMessageMapId) {
+		return notificationMessageMapRepo
+				.findAllParentMessageIdOfMessageId(notificationMessageMapId);
+	}
+
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public boolean deleteAllMessage(Long notificationId) {
-		System.out.println("here");
+	public boolean deleteAllMessage(Long notificationId) {		
 		User logedInUser = authendicationFacade.getCurrentUserDetails();		
 		notificationMessageMapRepo
 				.deleteAllMessage(notificationId,logedInUser.getId());		
 		return true;
 	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public boolean deleteAllMessage(List<Long> notificationIdList) {
+		User logedInUser = authendicationFacade.getCurrentUserDetails();		
+		notificationMessageMapRepo
+				.deleteAllMessageBulk(notificationIdList,logedInUser.getId());		
+		return true;
+	}
+
 
 }

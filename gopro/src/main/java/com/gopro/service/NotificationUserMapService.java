@@ -17,4 +17,6 @@ public interface NotificationUserMapService {
 
 	boolean deletMessage(Long messageId);
 
+	boolean updateReadMessageFlag(List<Long> notificationId, boolean isReaded);
+
 }

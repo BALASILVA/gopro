@@ -17,8 +17,8 @@ public interface NotificationDetailService {
 
 	boolean toggleImportantNotification(Long notificationId);
 
-	boolean makeFavNotificationInBulk(List<Long> notificationIdList);
+	boolean makeFavNotificationInBulk(List<Long> notificationIdList, boolean isFav);
 
-	boolean makeImportantNotificationInBulk(List<Long> notificationIdList);
+	boolean makeImportantNotificationInBulk(List<Long> notificationIdList, boolean isImp);
 
 }

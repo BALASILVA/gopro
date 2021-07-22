@@ -30,6 +30,26 @@ import com.gopro.queryconstant.NotificationMessageMapQueryConstant;
 @NamedNativeQuery(name = "findAllMessageIdByNotificationId", query = NotificationMessageMapQueryConstant.FIND_ALL_MESSAGE_ID_BY_NOTIFICATION_ID, resultClass = NotificationMessageMap.class, resultSetMapping = "findAllMessageIdByNotificationId")
 
 
+@SqlResultSetMapping(name = "findAllParentMessageIdOfMessageId", classes = @ConstructorResult(targetClass = com.gopro.bene.NotificationMessageMap.class, columns = {
+		@ColumnResult(name = "notificationMessageMapId", type = Long.class),
+		@ColumnResult(name = "parentNotificationMessageMapId", type = Long.class)
+		}
+))
+@NamedNativeQuery(name = "findAllParentMessageIdOfMessageId", query = NotificationMessageMapQueryConstant.FIND_ALL_PARENT_MESSAGE_ID_BY_MESSAGE_ID, resultClass = NotificationMessageMap.class, resultSetMapping = "findAllParentMessageIdOfMessageId")
+
+
+@SqlResultSetMapping(name = "findMessageByMessageId", classes = @ConstructorResult(targetClass = com.gopro.bene.NotificationMessageMap.class, columns = {
+		@ColumnResult(name = "notificationMessageMapId", type = Long.class),
+		@ColumnResult(name = "parentNotificationMessageMapId", type = Long.class),		
+		@ColumnResult(name = "sendFrom", type = Long.class),
+		@ColumnResult(name = "firstName", type = String.class),
+		@ColumnResult(name = "lastName", type = String.class),
+		@ColumnResult(name = "message", type = String.class),
+		@ColumnResult(name = "notificationId", type = Long.class),
+		@ColumnResult(name = "time", type = Date.class)}
+))
+@NamedNativeQuery(name = "findMessageByMessageId", query = NotificationMessageMapQueryConstant.FIND_MESSAGE_BY_MESSAGE_ID, resultClass = Invoice.class, resultSetMapping = "findAllMessageByNotificationId")
+
 @SqlResultSetMapping(name = "findAllMessageByNotificationId", classes = @ConstructorResult(targetClass = com.gopro.bene.NotificationMessageMap.class, columns = {
 		@ColumnResult(name = "notificationMessageMapId", type = Long.class),
 		@ColumnResult(name = "parentNotificationMessageMapId", type = Long.class),		
@@ -100,7 +120,15 @@ public class NotificationMessageMap {
 	public NotificationMessageMap(Long notificationMessageMapId) {
 		this.notificationMessageMapId = notificationMessageMapId;
 	}	
+		
 	
+	public NotificationMessageMap(Long notificationMessageMapId, Long parentNotificationMessageMapId) {
+		super();
+		this.notificationMessageMapId = notificationMessageMapId;
+		this.parentNotificationMessageMapId = parentNotificationMessageMapId;
+	}
+
+
 	public NotificationMessageMap(Long notificationMessageMapId,Long parentNotificationMessageMapId, Long sendFrom, String firstName, String lastName,
 			String message, Long notificationId, Date time) {
 		super();

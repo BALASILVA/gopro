@@ -29,8 +29,9 @@ public class NotificationMessageMapController {
 
 	@PostMapping(value="/getmessage")
 	public ResponseEntity<List<NotificationMessageMap>> findAllMeesageOfNotificationId(@RequestBody Long notificationId) {
-		List<NotificationMessageMap> notificationMessageMapFromDb = notificationMessageMapService.findAllMeesageOfNotificationId(notificationId);
-		return new ResponseEntity<>(notificationMessageMapFromDb, OK);
+		//List<NotificationMessageMap> notificationMessageMapFromDb = notificationMessageMapService.findAllMeesageOfNotificationId(notificationId);
+		//return new ResponseEntity<>(notificationMessageMapFromDb, OK);
+		return null;
 	}
 
 	@PostMapping(value="/reply")
@@ -39,9 +40,17 @@ public class NotificationMessageMapController {
 		return new ResponseEntity<>(notificationMessageMapFromDb, OK);
 	}
 	
+	//Delete all Messsage in SINGLE Thread
 	@PostMapping(value="/deleteall")
 	public ResponseEntity<Boolean> deleteAllMessage(@RequestBody Long notificationId) {
 		boolean isDeleted = notificationMessageMapService.deleteAllMessage(notificationId);
+		return new ResponseEntity<>(isDeleted, OK);
+	}
+	
+	//Delete all Messsage in Multiple Thread
+	@PostMapping(value="/deletebulk")
+	public ResponseEntity<Boolean> deleteAllMessage(@RequestBody List<Long> notificationIdList) {
+		boolean isDeleted = notificationMessageMapService.deleteAllMessage(notificationIdList);
 		return new ResponseEntity<>(isDeleted, OK);
 	}
 	

@@ -19,4 +19,6 @@ public interface NotificationService {
 	public Notification addNewMessageNotification(Notification notification);
 
 	public boolean updateLastUpdateTimeDate(Long notificationId);
+
+	public Notification findNotificationById(Long notificationId);
 }

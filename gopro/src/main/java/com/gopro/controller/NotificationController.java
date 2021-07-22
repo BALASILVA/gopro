@@ -28,10 +28,16 @@ public class NotificationController {
 	public NotificationController(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
-	
+		
 	@PostMapping(value="/compose/new")
 	public ResponseEntity<Notification> sendNotification(@RequestBody Notification notification) {					
 		Notification notifications = notificationService.addNewMessageNotification(notification);				
+		return new ResponseEntity<>(notifications, OK);
+	}
+
+	@PostMapping(value="/get")
+	public ResponseEntity<Notification> findNotification(@RequestBody Long notificationId) {					
+		Notification notifications = notificationService.findNotificationById(notificationId);				
 		return new ResponseEntity<>(notifications, OK);
 	}
 	

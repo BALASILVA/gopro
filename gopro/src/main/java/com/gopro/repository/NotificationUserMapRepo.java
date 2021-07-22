@@ -30,4 +30,8 @@ public interface NotificationUserMapRepo extends JpaRepository<NotificationUserM
 	@Query(value = "UPDATE notificationusermap SET isDeleted= 1  WHERE sendTo = :userId AND notificationMessageMapId = :notificationMessageMapId", nativeQuery = true)
 	int deletMessage(@Param("userId")Long userId,@Param("notificationMessageMapId") Long notificationMessageMapId);
 
+	@Modifying
+	@Query(value = "UPDATE notificationusermap notusr inner join  notificationMessageMap notmes on notmes.notificationMessageMapId = notusr.notificationMessageMapId SET notusr.isReaded = :isReaded WHERE notmes.notificationId in ( :notificationId ) AND notusr.sendTo = :userId", nativeQuery = true)
+	int updateReadMessageFlag(@Param("notificationId") List<Long> notificationId,@Param("userId") Long userId,@Param("isReaded") boolean isReaded);
+
 }

@@ -130,8 +130,7 @@ public class NotificationServiceImpl implements NotificationService {
 					notification.setNotificationDetail(notificationDetail);
 					notification.setNotificationMessageMap(notificationMessage);
 				}
-				System.out.println("search res"+notificationSearchResult.getSize());
-				System.out.println("search res"+notificationSearchResult);
+								
 				return notificationSearchResult;
 			} else {
 				// Need to retur Stats of all are update in response entity
@@ -144,6 +143,20 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 	}
 
+	@Override
+	public Notification findNotificationById(Long notificationId) {
+		User logedInUser = authendicationFacade.getCurrentUserDetails();
+		
+		Notification notification = notificationRepo.findNotificationById(logedInUser.getId(),notificationId);		
+		
+		List<NotificationDetail> notificationDetail = notificationDetailService.getNotificationDetail(logedInUser.getId(),notification.getNotificationId());
+		List<NotificationMessageMap> notificationMessage = notificationMessageMapService.findAllMeesageOfNotificationId(logedInUser.getId(),notificationId);
+		notification.setNotificationDetail(notificationDetail);
+		notification.setNotificationMessageMap(notificationMessage);		
+		
+		return notification ;
+	}
+	
 	@Override
 	public Notification findNotificationByInvoiceId(Long invoiceId) {
 		return notificationRepo.findNotificationByInvoiceId(invoiceId);
@@ -207,5 +220,6 @@ public class NotificationServiceImpl implements NotificationService {
 		System.out.println("Time Update" + count);
 		return count > 0;
 	}
+
 
 }

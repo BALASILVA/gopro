@@ -72,19 +72,19 @@ public class NotificationDetailServiceImpl implements NotificationDetailService 
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public boolean makeFavNotificationInBulk(List<Long> notificationIdList) {
+	public boolean makeFavNotificationInBulk(List<Long> notificationIdList,boolean isFav) {
 		 User user = authendicationFacade.getCurrentUserDetails();				
 		 System.out.println(notificationIdList.toString());
-		 notificationDetailRepo.makeFavNotificationInBulk(notificationIdList,user.getId());
+		 notificationDetailRepo.makeFavNotificationInBulk(notificationIdList,user.getId(), isFav);
 		 return true;
 	}
 
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public boolean makeImportantNotificationInBulk(List<Long> notificationIdList) {
+	public boolean makeImportantNotificationInBulk(List<Long> notificationIdList, boolean isImp) {
 		User user = authendicationFacade.getCurrentUserDetails();				
-		notificationDetailRepo.makeImportantNotificationInBulk(notificationIdList,user.getId());		 
+		notificationDetailRepo.makeImportantNotificationInBulk(notificationIdList,user.getId(), isImp);		 
 		return true;
 	}
 

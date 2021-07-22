@@ -24,6 +24,9 @@ public interface NotificationRepo extends PagingAndSortingRepository<Notificatio
 			@Param("sendTo") Long sendTo, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
 			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
+	@Query( name = "findNotificationById")
+	Notification findNotificationById(@Param("logInUser") Long logInUser, @Param("notificationId") Long notificationId);
+	
 	@Query(value = COUNT_NOTIFICATION_AFTER__SEARCH, nativeQuery = true)
 	Integer getUpdateAllNotification(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
 			@Param("sendTo") Long sendTo, @Param("fromDate") String fromDate, @Param("toDate") String toDate,

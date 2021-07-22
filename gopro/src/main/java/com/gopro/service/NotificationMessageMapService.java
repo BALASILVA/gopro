@@ -12,10 +12,14 @@ public interface NotificationMessageMapService {
 
 	List<NotificationMessageMap> findLastMeesageOfNotificationId(Notification notification, User logedInUser);
 
-	List<NotificationMessageMap> findAllMeesageOfNotificationId(Long notificationId);
+	List<NotificationMessageMap> findAllMeesageOfNotificationId(Long userId ,Long notificationId);
 
 	List<NotificationMessageMap> findAllMessageIdFromNotificationId(Long notificationId);
 
 	boolean deleteAllMessage(Long notificationId);
+
+	boolean deleteAllMessage(List<Long> notificationIdList);
+
+	List<NotificationMessageMap> findAllParentMessageIdOfMessageId(Long notificationMessageMapId);
 
 }

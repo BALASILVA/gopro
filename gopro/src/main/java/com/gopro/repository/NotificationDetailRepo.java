@@ -31,11 +31,11 @@ public interface NotificationDetailRepo extends JpaRepository<NotificationDetail
 	void toggleImportantNotification(@Param("notificationId")Long notificationId,@Param("userId") Long userId);
 
 	@Modifying
-	@Query(value = "UPDATE notificationdetail SET isfavorite = 1 WHERE  userId = :userId AND notificationId in (:notificationId)",nativeQuery = true)
-	int makeFavNotificationInBulk(@Param("notificationId")List<Long> notificationIdList,@Param("userId")  Long id);
+	@Query(value = "UPDATE notificationdetail SET isfavorite = :isFav WHERE  userId = :userId AND notificationId in (:notificationId)",nativeQuery = true)
+	int makeFavNotificationInBulk(@Param("notificationId")List<Long> notificationIdList,@Param("userId")  Long id, @Param("isFav") boolean isFav);
 
 	@Modifying
-	@Query(value = "UPDATE notificationdetail SET isimportant = 1 WHERE  userId = :userId AND notificationId in (:notificationId)",nativeQuery = true)
-	void makeImportantNotificationInBulk(@Param("notificationId")List<Long> notificationIdList,@Param("userId")  Long id);
+	@Query(value = "UPDATE notificationdetail SET isimportant = :isImp WHERE  userId = :userId AND notificationId in (:notificationId)",nativeQuery = true)
+	void makeImportantNotificationInBulk(@Param("notificationId")List<Long> notificationIdList,@Param("userId")  Long id,@Param("isImp") boolean isImp);
 	
 }
