@@ -1,12 +1,15 @@
 package com.gopro.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -36,17 +39,20 @@ public class NotificationServiceImpl implements NotificationService {
 	private UserService userService;
 	private NotificationMessageMapService notificationMessageMapService;
 	private NotificationDetailService notificationDetailService;
+	private CommanService commanService;
 
 	@Autowired
 	public NotificationServiceImpl(NotificationRepo notificationRepo, UserService userService,
 			AuthendicationFacade authendicationFacade,
 			@Lazy NotificationMessageMapService notificationMessageMapService,
-			NotificationDetailService notificationDetailService) {
+			NotificationDetailService notificationDetailService,
+			CommanService commanService) {
 		this.notificationRepo = notificationRepo;
 		this.userService = userService;
 		this.authendicationFacade = authendicationFacade;
 		this.notificationMessageMapService = notificationMessageMapService;
 		this.notificationDetailService = notificationDetailService;
+		this.commanService = commanService;
 	}
 
 	@Override
@@ -69,7 +75,7 @@ public class NotificationServiceImpl implements NotificationService {
 		notification.setNotificationLatUpdateDate(new Date());
 		
 		Set<Long> userIdToThisMail = new HashSet<Long>();
-		
+		List<Long> userIdList = new ArrayList<Long>();
 		
 		// Set message details
 		List<NotificationMessageMap> notificationMessageMapList = notification.getNotificationMessageMap();
@@ -84,13 +90,19 @@ public class NotificationServiceImpl implements NotificationService {
 			notificationUserMapObj.setMappingType(NotificationConstant.NOTIFICATION_MAPPING_TYPE_FROM);
 			messageObj.getNotificationUserMap().add(notificationUserMapObj);
 			
-			for(NotificationUserMap usrMapObj : messageObj.getNotificationUserMap())
+			for(NotificationUserMap usrMapObj : messageObj.getNotificationUserMap()) {
 				userIdToThisMail.add(usrMapObj.getSendTo());
+				userIdList.add(usrMapObj.getSendTo());
+			}
+			
 			userIdToThisMail.add(logedInUser.getId());
+			userIdList.add(logedInUser.getId());			
 		}
 				
 		Notification savedNotification =  notificationRepo.save(notification);
 		notificationDetailService.updateNotificationDetail(userIdToThisMail,savedNotification.getNotificationId());
+		
+		boolean isNewMessageStatusUpdated = userService.updateNewMailTrue(userIdList);
 		
 		return savedNotification;
 	}
@@ -98,30 +110,77 @@ public class NotificationServiceImpl implements NotificationService {
 	// Search Page
 	@Override
 	public Page<Notification> getAllNotification(SearchCredentialDTO searchCredentialDTO) {
-		System.out.println(searchCredentialDTO.getIsManualTrriger());
-
-		try {
-			
+		
+		try {			
 
 			if (userService.haveNewMail() || searchCredentialDTO.getIsManualTrriger()) {								
 				User logedInUser = authendicationFacade.getCurrentUserDetails();
 				userService.updateNewMailFalse(logedInUser.getId());
-				
+				System.out.println("Page "+searchCredentialDTO.getPage());
 				Pageable pageable = null;															
 				pageable = PageRequest.of(searchCredentialDTO.getPage(), 10); //Always 10 item per page
 				if (StringUtils.isEmpty(searchCredentialDTO.getSearchKeyWord())) {
 					searchCredentialDTO.setSearchKeyWord("");
+				}												
+				
+						               
+			       
+				
+				
+				
+				
+				// Increment Date By 1 
+				// IT Convert Sat Jul 24 00:00:00 IST 2021 1 To Sat Jul 25 00:00:00 IST 2021 1 (Include to date record also)
+				try {
+					//Optional<Date> optionalDate  = Optional.of(searchCredentialDTO.getToDate());
+					if(null != searchCredentialDTO.getToDate())
+					{
+						searchCredentialDTO.setToDate(commanService.incrementDate(searchCredentialDTO.getToDate(), 1));
+					}
 				}
-				searchCredentialDTO.setSearchKeyWord("%" + searchCredentialDTO.getSearchKeyWord() + "%");
+				catch (Exception e) {
+					System.out.println(e);
+				}
+
+				System.out.println(searchCredentialDTO.getFromDate());
+				System.out.println(searchCredentialDTO.getToDate());
 				
-				System.out.println(searchCredentialDTO.getSendFrom()+ " "+ searchCredentialDTO.getSendTo()+" "+
-						searchCredentialDTO.getFromDate()+" "+searchCredentialDTO.getToDate() +" "+						
-						searchCredentialDTO.getSearchKeyWord()+" "+searchCredentialDTO.getSubject());
+				Page<Notification> notificationSearchResult = null;
 				
-				Page<Notification> notificationSearchResult = notificationRepo.getAllNotifications(logedInUser.getId(),
+				if(searchCredentialDTO.getModuleName().equalsIgnoreCase(MODULE_NAME_ALL))
+				 notificationSearchResult = notificationRepo.getAllNotifications(logedInUser.getId(),
 						searchCredentialDTO.getSendFrom(), searchCredentialDTO.getSendTo(),
+						searchCredentialDTO.getSubject(),
 						searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),						
 						searchCredentialDTO.getSearchKeyWord(), pageable);
+				
+				if(searchCredentialDTO.getModuleName().equalsIgnoreCase(MODULE_NAME_INBOX))
+					 notificationSearchResult = notificationRepo.getInboxNotifications(logedInUser.getId(),
+							searchCredentialDTO.getSendFrom(), searchCredentialDTO.getSendTo(),
+							searchCredentialDTO.getSubject(),
+							searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),						
+							searchCredentialDTO.getSearchKeyWord(), pageable);
+				
+				if(searchCredentialDTO.getModuleName().equalsIgnoreCase(MODULE_NAME_SEND))
+					 notificationSearchResult = notificationRepo.getSendNotifications(logedInUser.getId(),
+							searchCredentialDTO.getSendFrom(), searchCredentialDTO.getSendTo(),
+							searchCredentialDTO.getSubject(),
+							searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),						
+							searchCredentialDTO.getSearchKeyWord(), pageable);
+				
+				if(searchCredentialDTO.getModuleName().equalsIgnoreCase(MODULE_NAME_STARED))
+					 notificationSearchResult = notificationRepo.getStaredNotifications(logedInUser.getId(),
+							searchCredentialDTO.getSendFrom(), searchCredentialDTO.getSendTo(),
+							searchCredentialDTO.getSubject(),
+							searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),						
+							searchCredentialDTO.getSearchKeyWord(), pageable);
+				
+				if(searchCredentialDTO.getModuleName().equalsIgnoreCase(MODULE_NAME_IMPORTANT))
+					 notificationSearchResult = notificationRepo.getImportantNotifications(logedInUser.getId(),
+							searchCredentialDTO.getSendFrom(), searchCredentialDTO.getSendTo(),
+							searchCredentialDTO.getSubject(),
+							searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),						
+							searchCredentialDTO.getSearchKeyWord(), pageable);
 				
 				for (Notification notification : notificationSearchResult.getContent()) {
 					List<NotificationDetail> notificationDetail = notificationDetailService.getNotificationDetail(logedInUser.getId(),notification.getNotificationId());

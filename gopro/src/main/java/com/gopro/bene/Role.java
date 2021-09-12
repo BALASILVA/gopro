@@ -14,28 +14,36 @@ import javax.persistence.ManyToMany;
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false, updatable = false,name="roleid")
+	@Column(nullable = false, updatable = false, name = "roleid")
 	private int roleId;
-	
-	@Column(name="rolename")	
+
+	@Column(name = "rolename")
 	private String roleName;
-	
-	@Column(name="isactive")
+
+	@Column(name = "isactive")
 	private String isActive;
-	
+
+	@Column(name = "description")
+	private String description;
+
+	@Column(name = "seqno")
+	private int seqNo;
+
 	@ManyToMany
 	@JoinColumn(name = "menuid")
-	@Column(name="menulist")
+	@Column(name = "menulist")
 	private List<Menu> menuList;
 
 	public Role() {
 	}
 
-	public Role(int roleId, String roleName, String isActive, List<Menu> menuList) {
+	public Role(int roleId, String roleName, String isActive, String description, int seqNo, List<Menu> menuList) {
 		super();
 		this.roleId = roleId;
 		this.roleName = roleName;
 		this.isActive = isActive;
+		this.description = description;
+		this.seqNo = seqNo;
 		this.menuList = menuList;
 	}
 
@@ -71,9 +79,28 @@ public class Role {
 		this.menuList = menuList;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
+	}
+
 	@Override
 	public String toString() {
-		return "Role [roleId=" + roleId + ", roleName=" + roleName + ", isActive=" + isActive + ", menuList=" + menuList
-				+ "]";
+		return "Role [roleId=" + roleId + ", " + (roleName != null ? "roleName=" + roleName + ", " : "")
+				+ (isActive != null ? "isActive=" + isActive + ", " : "")
+				+ (description != null ? "description=" + description + ", " : "") + "seqNo=" + seqNo + ", "
+				+ (menuList != null ? "menuList=" + menuList : "") + "]";
 	}
+
 }

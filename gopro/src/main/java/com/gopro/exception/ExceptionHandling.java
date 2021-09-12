@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.mail.SendFailedException;
 import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
@@ -46,11 +48,21 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(BAD_REQUEST, ACCOUNT_DISABLED);
     }
 
+//    @ExceptionHandler(BadCredentialsException.class)
+//    public ResponseEntity<HttpResponse> badCredentialsException() {
+//        return createHttpResponse(BAD_REQUEST, INCORRECT_CREDENTIALS);
+//    }
+//    
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<HttpResponse> badCredentialsException() {
-        return createHttpResponse(BAD_REQUEST, INCORRECT_CREDENTIALS);
+    public ResponseEntity<HttpResponse> badCredentialsException(BadCredentialsException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(InputMismatchException.class)
+    public ResponseEntity<HttpResponse> inputMismatchException(InputMismatchException exception) {
+        return createHttpResponse(EXPECTATION_FAILED, exception.getMessage());
+    }
+    
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<HttpResponse> accessDeniedException() {
         return createHttpResponse(FORBIDDEN, NOT_ENOUGH_PERMISSION);
@@ -81,6 +93,12 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(SendFailedException.class)
+    public ResponseEntity<HttpResponse> emailNotSendException(SendFailedException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());

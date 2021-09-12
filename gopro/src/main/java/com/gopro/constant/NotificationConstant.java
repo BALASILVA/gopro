@@ -30,6 +30,16 @@ public class NotificationConstant {
 	
 	public static final String NOTIFICATION_TYPE_OUT_OF_STOCK= "OUT_OF_STOCK";
 	
+	public static final String MODULE_NAME_ALL = "ALL";
+
+	public static final String MODULE_NAME_INBOX = "INBOX";
+
+	public static final String MODULE_NAME_SEND = "SEND";
+
+	public static final String MODULE_NAME_STARED = "STARED";
+
+	public static final String MODULE_NAME_IMPORTANT = "IMPORTANT";
+	
 	
 	
 	public static final List<Integer> INVOICE_REPRINT_NOTIFICTION_TO_SEND_ROLE_LIST =
@@ -41,4 +51,12 @@ public class NotificationConstant {
 			add(SUPER_ADMIN_ROLE_ID);
 			}
 		};
+		
+	public static final  List<Integer>  ADMIN_MANAGER_ROLEID = new ArrayList<Integer>(){
+			private static final long serialVersionUID = 1L;
+		{		
+		add(MANAGER_ROLE_ID);
+		add(SUPER_ADMIN_ROLE_ID);
+		}
+	};
 }

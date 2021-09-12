@@ -45,6 +45,7 @@ import com.gopro.queryconstant.NotificationMessageMapQueryConstant;
 		@ColumnResult(name = "firstName", type = String.class),
 		@ColumnResult(name = "lastName", type = String.class),
 		@ColumnResult(name = "message", type = String.class),
+		@ColumnResult(name = "messageInnerHtml", type = String.class),
 		@ColumnResult(name = "notificationId", type = Long.class),
 		@ColumnResult(name = "time", type = Date.class)}
 ))
@@ -57,6 +58,7 @@ import com.gopro.queryconstant.NotificationMessageMapQueryConstant;
 		@ColumnResult(name = "firstName", type = String.class),
 		@ColumnResult(name = "lastName", type = String.class),
 		@ColumnResult(name = "message", type = String.class),
+		@ColumnResult(name = "messageInnerHtml", type = String.class),
 		@ColumnResult(name = "notificationId", type = Long.class),
 		@ColumnResult(name = "time", type = Date.class)}
 ))
@@ -67,7 +69,7 @@ import com.gopro.queryconstant.NotificationMessageMapQueryConstant;
 		@ColumnResult(name = "sendFrom", type = Long.class),
 		@ColumnResult(name = "firstName", type = String.class),
 		@ColumnResult(name = "lastName", type = String.class),
-		@ColumnResult(name = "message", type = String.class),
+		@ColumnResult(name = "message", type = String.class),		
 		@ColumnResult(name = "notificationId", type = Long.class),
 		@ColumnResult(name = "time", type = Date.class) }))
 @NamedNativeQuery(name = "findLastMessageByNotificationId", query = NotificationMessageMapQueryConstant.FIND_LAST_MESSAGE_BY_NOTIFICATION_ID, resultClass = NotificationMessageMap.class, resultSetMapping = "findLastMessageByNotificationId")
@@ -95,7 +97,10 @@ public class NotificationMessageMap {
 
 	@Column(name = "message")
 	private String message;
-
+	
+	@Column(name = "messageinnerhtml")
+	private String messageInnerHtml; 
+	
 	// Column used for map message to user in Reply Or Reply all action
 	@Column(name = "isreplyorreplyallaction", columnDefinition = "boolean default false", nullable = false)
 	private boolean isReplyOrReplyAllAction;
@@ -142,6 +147,20 @@ public class NotificationMessageMap {
 		this.time = time;
 	}
 
+	public NotificationMessageMap(Long notificationMessageMapId,Long parentNotificationMessageMapId, Long sendFrom, String firstName, String lastName,
+			String message, String messageInnerHtml, Long notificationId, Date time) {
+		super();
+		this.notificationMessageMapId = notificationMessageMapId;
+		this.parentNotificationMessageMapId = parentNotificationMessageMapId;
+		this.sendFrom = sendFrom;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.message = message;
+		this.messageInnerHtml = messageInnerHtml;
+		this.notificationId = notificationId;
+		this.time = time;
+	}
+
 	
 	public NotificationMessageMap(Long notificationMessageMapId, Long sendFrom, String firstName, String lastName,
 			String message, Long notificationId, Date time) {
@@ -157,10 +176,9 @@ public class NotificationMessageMap {
 
 	// Customise constrictor For JPA Query END
 	
-	
 	public NotificationMessageMap(Long notificationMessageMapId, Long parentNotificationMessageMapId, Long sendFrom,
-			String firstName, String lastName, String message, boolean isReplyOrReplyAllAction, Long notificationId,
-			Date time, List<NotificationUserMap> notificationUserMap) {
+			String firstName, String lastName, String message, String messageInnerHtml, boolean isReplyOrReplyAllAction,
+			Long notificationId, Date time, List<NotificationUserMap> notificationUserMap) {
 		super();
 		this.notificationMessageMapId = notificationMessageMapId;
 		this.parentNotificationMessageMapId = parentNotificationMessageMapId;
@@ -168,6 +186,7 @@ public class NotificationMessageMap {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.message = message;
+		this.messageInnerHtml = messageInnerHtml;
 		this.isReplyOrReplyAllAction = isReplyOrReplyAllAction;
 		this.notificationId = notificationId;
 		this.time = time;
@@ -235,6 +254,16 @@ public class NotificationMessageMap {
 	}
 
 
+	public String getMessageInnerHtml() {
+		return messageInnerHtml;
+	}
+
+
+	public void setMessageInnerHtml(String messageInnerHtml) {
+		this.messageInnerHtml = messageInnerHtml;
+	}
+
+
 	public boolean isReplyOrReplyAllAction() {
 		return isReplyOrReplyAllAction;
 	}
@@ -286,11 +315,16 @@ public class NotificationMessageMap {
 				+ (sendFrom != null ? "sendFrom=" + sendFrom + ", " : "")
 				+ (firstName != null ? "firstName=" + firstName + ", " : "")
 				+ (lastName != null ? "lastName=" + lastName + ", " : "")
-				+ (message != null ? "message=" + message + ", " : "") + "isReplyOrReplyAllAction="
-				+ isReplyOrReplyAllAction + ", "
+				+ (message != null ? "message=" + message + ", " : "")
+				+ (messageInnerHtml != null ? "messageInnerHtml=" + messageInnerHtml + ", " : "")
+				+ "isReplyOrReplyAllAction=" + isReplyOrReplyAllAction + ", "
 				+ (notificationId != null ? "notificationId=" + notificationId + ", " : "")
 				+ (time != null ? "time=" + time + ", " : "")
 				+ (notificationUserMap != null ? "notificationUserMap=" + notificationUserMap : "") + "]";
-	}	
+	}
+
+
+	
+	
 
 }

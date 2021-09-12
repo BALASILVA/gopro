@@ -28,11 +28,17 @@ public class Product {
 	@Column(name = "barcode")
 	private String barCode;
 
+	@Column(name = "sysgenbarcodebackup")
+	private String sysGenBarCodeBakeUp;
+
 	@Column(name = "issysgenbarcode")
 	private String isSysGenBarCode;
 
-	@Column(name = "price")
-	private Long price;
+	@Column(name = "mrpprice")
+	private Double mrpPrice;
+
+	@Column(name = "sellingprice")
+	private Double sellingprice;
 
 	@Column(name = "availablestock")
 	private Long availableStock;
@@ -60,15 +66,17 @@ public class Product {
 	public Product() {
 	}
 
-	public Product(Long productId, String productName, String barCode, String isSysGenBarCode, Long price,
-			Long availableStock, Long totalSale, String remarks, String isActive, Date lastLoadDate, Date createdDate,
-			Shop shop) {
+	public Product(Long productId, String productName, String barCode, String sysGenBarCodeBakeUp,
+			String isSysGenBarCode, Double mrpPrice, Double sellingprice, Long availableStock, Long totalSale,
+			String remarks, String isActive, Date lastLoadDate, Date createdDate, Shop shop) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.barCode = barCode;
+		this.sysGenBarCodeBakeUp = sysGenBarCodeBakeUp;
 		this.isSysGenBarCode = isSysGenBarCode;
-		this.price = price;
+		this.mrpPrice = mrpPrice;
+		this.sellingprice = sellingprice;
 		this.availableStock = availableStock;
 		this.totalSale = totalSale;
 		this.remarks = remarks;
@@ -102,6 +110,14 @@ public class Product {
 		this.barCode = barCode;
 	}
 
+	public String getSysGenBarCodeBakeUp() {
+		return sysGenBarCodeBakeUp;
+	}
+
+	public void setSysGenBarCodeBakeUp(String sysGenBarCodeBakeUp) {
+		this.sysGenBarCodeBakeUp = sysGenBarCodeBakeUp;
+	}
+
 	public String getIsSysGenBarCode() {
 		return isSysGenBarCode;
 	}
@@ -110,12 +126,20 @@ public class Product {
 		this.isSysGenBarCode = isSysGenBarCode;
 	}
 
-	public Long getPrice() {
-		return price;
+	public Double getMrpPrice() {
+		return mrpPrice;
 	}
 
-	public void setPrice(Long price) {
-		this.price = price;
+	public void setMrpPrice(Double mrpPrice) {
+		this.mrpPrice = mrpPrice;
+	}
+
+	public Double getSellingprice() {
+		return sellingprice;
+	}
+
+	public void setSellingprice(Double sellingprice) {
+		this.sellingprice = sellingprice;
 	}
 
 	public Long getAvailableStock() {
@@ -176,10 +200,20 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [productId=" + productId + ", productName=" + productName + ", barCode=" + barCode
-				+ ", isSysGenBarCode=" + isSysGenBarCode + ", price=" + price + ", availableStock=" + availableStock
-				+ ", totalSale=" + totalSale + ", remarks=" + remarks + ", isActive=" + isActive + ", lastLoadDate="
-				+ lastLoadDate + ", createdDate=" + createdDate + ", shop=" + shop + "]";
+		return "Product [" + (productId != null ? "productId=" + productId + ", " : "")
+				+ (productName != null ? "productName=" + productName + ", " : "")
+				+ (barCode != null ? "barCode=" + barCode + ", " : "")
+				+ (sysGenBarCodeBakeUp != null ? "sysGenBarCodeBakeUp=" + sysGenBarCodeBakeUp + ", " : "")
+				+ (isSysGenBarCode != null ? "isSysGenBarCode=" + isSysGenBarCode + ", " : "")
+				+ (mrpPrice != null ? "mrpPrice=" + mrpPrice + ", " : "")
+				+ (sellingprice != null ? "sellingprice=" + sellingprice + ", " : "")
+				+ (availableStock != null ? "availableStock=" + availableStock + ", " : "")
+				+ (totalSale != null ? "totalSale=" + totalSale + ", " : "")
+				+ (remarks != null ? "remarks=" + remarks + ", " : "")
+				+ (isActive != null ? "isActive=" + isActive + ", " : "")
+				+ (lastLoadDate != null ? "lastLoadDate=" + lastLoadDate + ", " : "")
+				+ (createdDate != null ? "createdDate=" + createdDate + ", " : "")
+				+ (shop != null ? "shop=" + shop : "") + "]";
 	}
 
 }

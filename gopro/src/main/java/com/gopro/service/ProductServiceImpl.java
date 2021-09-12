@@ -1,6 +1,7 @@
 package com.gopro.service;
 
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,6 +92,15 @@ public class ProductServiceImpl implements ProductService {
 
 	public Product addNewProduct(Product product) {
 		User user = authenticationFacade.getCurrentUserDetails();
+		
+		Product productValidateBarcode = productRepo.findBarCodeAvailable(user.getDefaultShopId(),product.getBarCode());
+		
+		if(productValidateBarcode != null)
+		{
+			throw new InputMismatchException("Bar Code Value Already Registerd For "+productValidateBarcode.getProductName());
+		}
+		
+		
 		Shop shop = new Shop();
 		shop.setShopId(user.getDefaultShopId());
 		product.setShop(shop);
@@ -104,8 +114,11 @@ public class ProductServiceImpl implements ProductService {
 		}
 		else
 		{
-			product.setBarCode("CUS"+new Date());
+			String barCodeId = "PRODUCT"+new Date().getTime();
+			product.setBarCode(barCodeId);
+			product.setSysGenBarCodeBakeUp(barCodeId);
 			product.setIsSysGenBarCode("Y");
+			
 		}
 		
 		Product savedProduct = productRepo.save(product);
@@ -113,16 +126,49 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product updateProduct(Product product) {
-		// Get The product details from data base by id
+	public Product updateProduct(Product product) {				
+		
+		// Get The product details from data base by id		
 		Product productCopy = getProductById(product.getProductId());
 
+		if(productCopy == null)
+			throw new InputMismatchException("Failed To Update, Product Not Found");
+		
+		//Check Bar Code is Valid -- Validate duplicate
+		Product productValidateBarcode = productRepo.findBarCodeAvailable(productCopy.getShop().getShopId(),productCopy.getProductId(),product.getBarCode());
+		if(productValidateBarcode != null)
+		{
+			throw new InputMismatchException("Bar Code Value Already Registerd For "+productValidateBarcode.getProductName());
+		}
+
+		if(StringUtils.isBlank(product.getBarCode()))
+		{
+			if(StringUtils.isNotBlank(productCopy.getSysGenBarCodeBakeUp())) {
+				productCopy.setBarCode(productCopy.getSysGenBarCodeBakeUp());			
+				productCopy.setIsSysGenBarCode("Y");
+				productCopy.setSysGenBarCodeBakeUp(productCopy.getSysGenBarCodeBakeUp());
+			}
+			else
+			{
+				String barCodeId = "PRODUCT"+new Date().getTime();
+				productCopy.setBarCode(barCodeId);
+				productCopy.setSysGenBarCodeBakeUp(barCodeId);
+				productCopy.setIsSysGenBarCode("Y");
+			}
+		}
+		else {
+			//Security reason
+			productCopy.setBarCode(product.getBarCode());
+			productCopy.setSysGenBarCodeBakeUp(productCopy.getSysGenBarCodeBakeUp());			
+		}
+		
 		// update only required parameter and save
-		productCopy.setProductName(product.getProductName());
-		productCopy.setPrice(product.getPrice());
+		productCopy.setProductName(product.getProductName());		
+		productCopy.setMrpPrice(product.getMrpPrice());
+		productCopy.setSellingprice(product.getSellingprice());
 		productCopy.setAvailableStock(product.getAvailableStock());
 		productCopy.setRemarks(product.getRemarks());
-
+				
 		return productRepo.save(productCopy);
 	}
 

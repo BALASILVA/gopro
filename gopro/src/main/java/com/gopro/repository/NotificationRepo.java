@@ -21,9 +21,30 @@ public interface NotificationRepo extends PagingAndSortingRepository<Notificatio
 
 	@Query(name = "findAllNotification")
 	Page<Notification> getAllNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
-			@Param("sendTo") Long sendTo, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
+			@Param("sendTo") Long sendTo, @Param("subject") String subject,@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
+			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+	
+	@Query(name = "findInboxNotification")
+	Page<Notification> getInboxNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
+			@Param("sendTo") Long sendTo, @Param("subject") String subject,@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
+			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+	
+	@Query(name = "findSendNotification")
+	Page<Notification> getSendNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
+			@Param("sendTo") Long sendTo, @Param("subject") String subject,@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
 			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
 
+	@Query(name = "findStaredNotification")
+	Page<Notification> getStaredNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
+			@Param("sendTo") Long sendTo, @Param("subject") String subject,@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
+			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+	
+	@Query(name = "findImportantNotification")
+	Page<Notification> getImportantNotifications(@Param("logInUser") Long logInUser, @Param("sendFrom") Long sendFrom,
+			@Param("sendTo") Long sendTo, @Param("subject") String subject,@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
+			@Param("searchKeyWord") String searchKeyWord, Pageable pageable);
+	
+	
 	@Query( name = "findNotificationById")
 	Notification findNotificationById(@Param("logInUser") Long logInUser, @Param("notificationId") Long notificationId);
 	

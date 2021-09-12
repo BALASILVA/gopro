@@ -104,7 +104,7 @@ public class Invoice {
 		this.userName = userName;
 		this.remarks = remarks;
 	}
-
+	// Dont removed This constructor
 	
 	
 	public Invoice(Long invoiceId, Long customerMobileNo, List<InvoiceProductMap> invoiceProductMap, int noOfProduct,

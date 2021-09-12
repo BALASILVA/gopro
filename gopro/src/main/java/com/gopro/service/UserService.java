@@ -15,11 +15,11 @@ import org.springframework.data.domain.Page;
 
 public interface UserService {
 
-    User register(String userName,String shopName, String email, String password) throws UserNotFoundException, UsernameExistException, EmailExistException;
+    User register(String userName,Shop shop, String email,String phone, String phoneNumber,String password, Long otp) throws UserNotFoundException, UsernameExistException, EmailExistException;
   
     //User added by super admin role
-  	User addNewUser( String firstName, String email, String phoneNumber, String addressLine1,
-  			List<Shop> shopList, Role role, String remarks)  throws UserNotFoundException, UsernameExistException, EmailExistException;
+  	User addNewUser( String firstName,String lastName, String email, String phoneNumber, String addressLine1,
+  			List<Shop> shopList, Role role, String remarks)  throws UserNotFoundException, UsernameExistException, EmailExistException, Exception;
 
   	List<User> getUsers();
 
@@ -38,7 +38,9 @@ public interface UserService {
 	boolean updateDefaultShop(Shop shop);
 
 	List<User> getUserForReprintNotification(User logedInUser);
-
+	
+	List<User> getAdminANDManagerUser(Long parentUserID);
+	
 	List<User> getUserForSendMail();
 
 	boolean haveNewMail();
@@ -46,5 +48,13 @@ public interface UserService {
 	boolean updateNewMailTrue(List<Long> userId);
 
 	boolean updateNewMailFalse(Long userId);
+
+	boolean updateProfileImageUrl(Long id, String imageName);
+
+	boolean changePassword(Long userId, String newPassword);
+
+	boolean deleteUser(User userFromDB);
+
+	boolean isMailAvailable(String email) ;
     
 }

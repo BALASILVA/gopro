@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,26 +40,29 @@ public class InvoiceServiceImpl implements InvoiceService {
 	private InvoiceProductService invoiceProductService;
 	private CustomerService customerService;
 	private NotificationService notificationService;
+	private CommanService commanService;
+	
 	@PersistenceContext
 	private EntityManager em;
 
 	@Autowired
 	public InvoiceServiceImpl(InvoiceRepo invoiceRepo, @Lazy AuthendicationFacade authendicationFacade,
 			UserService userService, InvoiceProductService invoiceProductService, CustomerService customerService,
-			NotificationService notificationService) {
+			NotificationService notificationService, CommanService commanService) {
 		this.invoiceRepo = invoiceRepo;
 		this.authendicationFacade = authendicationFacade;
 		this.userService = userService;
 		this.invoiceProductService = invoiceProductService;
 		this.customerService = customerService;
 		this.notificationService = notificationService;
+		this.commanService = commanService;
 	}
 
 	@Override
 	public Invoice add(Invoice invoice) {
-
+		
 		User user = authendicationFacade.getCurrentUserDetails();
-
+		
 		// checking InvoiceProductMap object
 		invoice.getInvoiceProductMap().parallelStream()
 				.forEach((obj -> obj.setTotalPriceOfProduct(obj.getNoOfProduct() * obj.getPricePerItem())));
@@ -101,7 +105,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Override
 	public Page<Invoice> getAllInvoicePaginationAndSorting(SearchCredentialDTO searchCredentialDTO) {
-		User logedInUser = authendicationFacade.getCurrentUserDetails();
+		User logedInUser = authendicationFacade.getCurrentUserDetails();		
 		searchCredentialDTO.setDefaultShopId(logedInUser.getDefaultShopId());
 
 		Sort sort = null;
@@ -123,8 +127,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		}
 		Pageable pageable = null;
 
-		if (sort != null) {
-			System.out.println("inside");
+		if (sort != null) {		
 			pageable = PageRequest.of(searchCredentialDTO.getPage(), searchCredentialDTO.getSize(), sort);
 		} else {
 			pageable = PageRequest.of(searchCredentialDTO.getPage(), searchCredentialDTO.getSize());
@@ -134,20 +137,26 @@ public class InvoiceServiceImpl implements InvoiceService {
 		}
 
 		searchCredentialDTO.setSearchKeyWord("%" + searchCredentialDTO.getSearchKeyWord() + "%");
-
+		System.out.println(searchCredentialDTO.getFromDate()+"  "+searchCredentialDTO.getToDate()+ " "+searchCredentialDTO.getSendFrom());
+		 						
+		        
 		try {
-			return invoiceRepo.findAllOfInvoice(searchCredentialDTO.getInvoiceId(),
+			Page<Invoice> res = invoiceRepo.findAllOfInvoice(searchCredentialDTO.getInvoiceId(),
 					searchCredentialDTO.getCustomerMobileNo(),
 					searchCredentialDTO.getNoOfProduct() == 0 ? null : (long) searchCredentialDTO.getDefaultShopId(),
-					searchCredentialDTO.getStartPrice(), searchCredentialDTO.getEndPrice(),
-					searchCredentialDTO.getFromDate(), searchCredentialDTO.getToDate(),
-					searchCredentialDTO.getPaymentType(), searchCredentialDTO.getUsername(),
+					searchCredentialDTO.getStartPrice(),
+					searchCredentialDTO.getEndPrice(),					
+					searchCredentialDTO.getFromDate(), 
+					searchCredentialDTO.getToDate() == null ? null : commanService.maximiumTimeOfDate(searchCredentialDTO.getToDate()),					
+					searchCredentialDTO.getPaymentType(),
 					searchCredentialDTO.getSearchKeyWord(),
 					searchCredentialDTO.getDefaultShopId() == 0 ? null : searchCredentialDTO.getDefaultShopId(),
+					searchCredentialDTO.getSendFrom(),
 					pageable);
-
+			
+			return res;
 		} catch (Exception ex) {
-			System.out.println("Exception" + ex);
+			System.out.println(ex);
 			return null;
 		}
 

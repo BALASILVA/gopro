@@ -2,6 +2,8 @@ package com.gopro.controller;
 
 import com.gopro.bene.User;
 import com.gopro.bene.UserPrincipal;
+import com.gopro.constant.UserImplConstant;
+import com.gopro.AuthendicationFacade.AuthendicationFacade;
 import com.gopro.bene.Authority;
 import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.bene.Shop;
@@ -12,24 +14,24 @@ import com.gopro.exception.domain.UsernameExistException;
 import com.gopro.service.AuthorityService;
 import com.gopro.service.UserService;
 import com.gopro.utility.JWTTokenProvider;
-
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.gopro.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.OK;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,15 +43,16 @@ public class UserController extends ExceptionHandling {
 	private UserService userService;
 	private AuthorityService authorityService;
 	private JWTTokenProvider jwtTokenProvider;
-	
+	private AuthendicationFacade authendicationFacade;
 
 	@Autowired
 	public UserController(AuthenticationManager authenticationManager, UserService userService,
-			JWTTokenProvider jwtTokenProvider,AuthorityService authorityService) {
+			JWTTokenProvider jwtTokenProvider,AuthorityService authorityService,AuthendicationFacade authendicationFacade) {
 		this.authenticationManager = authenticationManager;
 		this.userService = userService;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.authorityService = authorityService;
+		this.authendicationFacade = authendicationFacade;
 	}
 
 	@PostMapping("/login")
@@ -77,23 +80,27 @@ public class UserController extends ExceptionHandling {
 	@PostMapping("/register")
 	public ResponseEntity<User> register(@RequestBody User user)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		User newUser = userService.register(user.getUsername(),user.getShopList().get(0).getShopName(), user.getEmail(), user.getPassword());
+		User newUser = userService.register(user.getFirstName(),user.getShopList().get(0), user.getEmail(),user.getPhoneNumber(), user.getPassword(), user.getPhoneNumber(), user.getOtp());
 		return new ResponseEntity<>(newUser, OK);
 	}
 
 	@PostMapping("/add")
 	public ResponseEntity<User> addNewUser(@RequestBody User user)
-			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		User newUser = userService.addNewUser(user.getFirstName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
+			throws UserNotFoundException, UsernameExistException, EmailExistException,Exception {		
+		User newUser = userService.addNewUser(user.getFirstName(),user.getLastName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
+		if(newUser == null)
+			throw new Exception(UserImplConstant.TECHINICAL_ERROR_OCCURED);
+		
 		return new ResponseEntity<>(newUser, OK);
 	}
 	
 	@PostMapping("/update")
 	public ResponseEntity<User> updateUser(@RequestBody User user)
-			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		System.out.println(user.getRemarks());
+			throws UserNotFoundException, UsernameExistException, EmailExistException, Exception {
+		System.out.println("Rem "+user.getRemarks());
 		User updatedUser = userService.updateUser(user.getId(),user.getFirstName(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
-		
+		if(updatedUser == null)
+			throw new Exception(UserImplConstant.TECHINICAL_ERROR_OCCURED);
 		return new ResponseEntity<>(updatedUser, OK);
 	}
 	
@@ -112,6 +119,16 @@ public class UserController extends ExceptionHandling {
 		return new ResponseEntity<>(userList, OK);
 	}	
 	
+	@PostMapping("/changepassword")
+	public ResponseEntity<Boolean> changePassword(@RequestBody User user)
+			throws UserNotFoundException, UsernameExistException, EmailExistException {
+		User loginUser = authendicationFacade.getCurrentUserDetails();
+		authenticate(loginUser.getEmail(), user.getPassword());		
+		boolean isUpdated = userService.changePassword(loginUser.getId(),user.getNewPassword());
+		
+		return new ResponseEntity<>(isUpdated, OK);
+	}
+	
 	@GetMapping(value="/getuserformail")
 	public ResponseEntity<List<User>> getUserForSendMail()
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
@@ -125,6 +142,14 @@ public class UserController extends ExceptionHandling {
 			boolean updated = userService.haveNewMail();
 		return new ResponseEntity<>(updated, OK);
 	}
+	
+	
+	@PostMapping(value="/ismailavailable")
+	public ResponseEntity<Boolean> isMailAvailable(@RequestBody User user)
+	{
+		boolean isMailAvailable = userService.isMailAvailable(user.getEmail());
+		return new ResponseEntity<>(isMailAvailable, OK);
+	}	
 	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {
 		HttpHeaders headers = new HttpHeaders();

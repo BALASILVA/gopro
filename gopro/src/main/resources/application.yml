@@ -3,6 +3,7 @@ jwt:
 
 
 server:
+  #address: 192.168.225.65 Now local host
   port: 8081
 #  error:
 #    whitelabel:
@@ -27,3 +28,30 @@ spring:
     throw-exception-if-no-handler-found: true
   resources:
     add-mappings: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: balasilvaee@gmail.com
+    password: ippszaiehlfstlxy
+    protocol: smtp    
+    tls: true
+    properties.mail.smtp:
+        auth: true
+        starttls.enable: true
+        ssl.trust: smtp.gmail.com          
+    
+logging:
+  file:
+    name: application.log
+    max-history: 1
+    max-size: 10MB      
+    path: logs
+  pattern:
+    rolling-file-name: ${LOG_FILE}.%d{yyyy-MM-dd}.%i
+  
+  
+user.profileimage.path : /USER/PROFILEIMAGE/  
+
+
+   

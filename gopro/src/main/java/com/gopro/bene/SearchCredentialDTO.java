@@ -33,8 +33,8 @@ public class SearchCredentialDTO {
 	private Long productId;
 	private String productName;
 	private Long price;
-	private Long startPrice;
-	private Long endPrice;
+	private Double startPrice;
+	private Double endPrice;
 	private Long availableStock;
 	private Long startAvailableStock;
 	private Long endAvailableStock;
@@ -99,7 +99,7 @@ public class SearchCredentialDTO {
 			String shortOrderAscOrDsc, String moduleName, boolean isActive, boolean isNotLocked,
 			boolean isManualTrriger, Long id, String userId, String username, String firstName, String email,
 			String phoneNumber, Long parentUserId, Long defaultShopId, Long productId, String productName, Long price,
-			Long startPrice, Long endPrice, Long availableStock, Long startAvailableStock, Long endAvailableStock,
+			Double startPrice, Double endPrice, Long availableStock, Long startAvailableStock, Long endAvailableStock,
 			Long totalSale, Long startTotalSale, Long endTotalSale, Date lastLoadDate, Date startLastLoadDate,
 			Date endLastLoadDate, Long shopId, String shopName, String addressLineOne, String addressLineTwo,
 			String addressLineThree, String district, String state, String pinCode, Long invoiceId,
@@ -261,7 +261,7 @@ public class SearchCredentialDTO {
 		return isManualTrriger;
 	}
 
-	public void setIsManualTrriger(boolean isManualTrriger) {
+	public void setManualTrriger(boolean isManualTrriger) {
 		this.isManualTrriger = isManualTrriger;
 	}
 
@@ -353,19 +353,19 @@ public class SearchCredentialDTO {
 		this.price = price;
 	}
 
-	public Long getStartPrice() {
+	public Double getStartPrice() {
 		return startPrice;
 	}
 
-	public void setStartPrice(Long startPrice) {
+	public void setStartPrice(Double startPrice) {
 		this.startPrice = startPrice;
 	}
 
-	public Long getEndPrice() {
+	public Double getEndPrice() {
 		return endPrice;
 	}
 
-	public void setEndPrice(Long endPrice) {
+	public void setEndPrice(Double endPrice) {
 		this.endPrice = endPrice;
 	}
 

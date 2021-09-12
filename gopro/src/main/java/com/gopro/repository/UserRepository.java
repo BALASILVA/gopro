@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 	@Query(value = "select * from user usr where ( usr.parentUserId = :parentUserId OR usr.id = :parentUserId) AND usr.roleId in :roleId", nativeQuery = true)
-	List<User> getUserForReprintNotification(@Param("parentUserId") Long parentUserId,
+	List<User> getUserByRole(@Param("parentUserId") Long parentUserId,
 			@Param("roleId") List<Integer> roles);
  
 	@Query(nativeQuery = true , name = "findUserForSendMail")
@@ -42,12 +42,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean haveNewMail(@Param("logInUserName") String logInUserName);	
 	
 	@Modifying
-	@Query(value = "update user set hasnewmail=:value where id in :userId", nativeQuery = true)
+	@Query(value = "update user set hasnewmail=:value where id in (:userId)", nativeQuery = true)
 	void updateNewMailTrue(@Param("value") boolean value,@Param("userId")List<Long> userId );
 	
 	@Modifying
 	@Query(value = "update user set hasnewmail=:value where id = :userId", nativeQuery = true)
 	void updateNewMailFalse(@Param("value") boolean value,@Param("userId")Long userId );
 
+	@Modifying
+	@Query(value = "update user set profileimageurl=:imageName where id = :userId", nativeQuery = true)
+	int updateProfileImageUrl(@Param("userId") Long id,@Param("imageName") String imageName);
+
+	@Modifying
+	@Query(value = "update user set password=:newPassword where id = :userId", nativeQuery = true)
+	int updatePassword(@Param("userId")Long userId,@Param("newPassword") String newPassword);
+
+	@Modifying
+	@Query(value = "DELETE FROM user where id = :userId", nativeQuery = true)
+	void deleteByIdCustom(@Param("userId")Long id);
+	@Modifying
+	@Query(value = "DELETE FROM user_shop_list where user_id = :userId", nativeQuery = true)	
+	void deleteUserShopMaping(@Param("userId")Long id);
 
 }

@@ -1,6 +1,5 @@
 package com.gopro.bene;
 
-
 import javax.persistence.*;
 
 import com.gopro.queryconstant.UserQueryConstant;
@@ -10,13 +9,10 @@ import java.util.Date;
 import java.util.List;
 
 @SqlResultSetMapping(name = "findUserForSendMail", classes = @ConstructorResult(targetClass = com.gopro.bene.User.class, columns = {
-		@ColumnResult(name = "Id", type = Long.class),
-		@ColumnResult(name = "username", type = String.class),
-		@ColumnResult(name = "firstName", type = String.class),
-		@ColumnResult(name = "lastName", type = String.class),
+		@ColumnResult(name = "Id", type = Long.class), @ColumnResult(name = "username", type = String.class),
+		@ColumnResult(name = "firstName", type = String.class), @ColumnResult(name = "lastName", type = String.class),
 		@ColumnResult(name = "phoneNumber", type = String.class),
-		@ColumnResult(name = "profileImageUrl", type = String.class)
-	 }))
+		@ColumnResult(name = "profileImageUrl", type = String.class) }))
 @NamedNativeQuery(name = "findUserForSendMail", query = UserQueryConstant.FIND_USERS_FOR_SEND_MAIL, resultClass = User.class, resultSetMapping = "findUserForSendMail")
 @Entity
 public class User implements Serializable {
@@ -42,13 +38,15 @@ public class User implements Serializable {
 	@Column(name = "password")
 	private String password;
 
+	private String newPassword;
+
 	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
 	@Column(name = "phonenumber")
 	private String phoneNumber;
 
-	@Column(name = "parentuserid",nullable = false, updatable = false)
+	@Column(name = "parentuserid", nullable = false, updatable = false)
 	private Long parentUserId;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
@@ -97,25 +95,28 @@ public class User implements Serializable {
 
 	@Column(name = "remarks")
 	private String remarks;
-	
-	@Column(name = " hasnewmail", columnDefinition = "boolean default false",nullable = false)
+
+	@Column(name = "otp")
+	private Long otp;
+
+	@Column(name = " hasnewmail", columnDefinition = "boolean default false", nullable = false)
 	private boolean hasNewMail;
 
 	@OneToOne
 	@JoinColumn(name = "roleid")
 	private Role roleObject;
 
-	/////Query Constructors Dont remove//////
-	// Query Name = 
-	// Method Name = 
+	///// Query Constructors Dont remove//////
+	// Query Name =
+	// Method Name =
 	public User(Long id, String username) {
 		this.Id = id;
 		this.username = username;
 	}
 
-	/////Query Constructors Dont remove///////
-	
-	/////Query Constructors Dont remove//////	
+	///// Query Constructors Dont remove///////
+
+	///// Query Constructors Dont remove//////
 	public User(Long id, String firstName, String lastName, String username, String phoneNumber,
 			String profileImageUrl) {
 		this.Id = id;
@@ -125,19 +126,18 @@ public class User implements Serializable {
 		this.phoneNumber = phoneNumber;
 		this.profileImageUrl = profileImageUrl;
 	}
-	/////Query Constructors Dont remove//////
+	///// Query Constructors Dont remove//////
 
-	
-	
 	public User() {
-		
+
 	}
 
 	public User(Long id, String userId, String firstName, String lastName, String username, String password,
-			String email, String phoneNumber, Long parentUserId, List<Shop> shopList, Long defaultShopId,
-			String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role,
-			String[] authorities, boolean isActive, boolean isNotLocked, String addressLine1, String addressLine2,
-			String addressLine3, String state, String pinCode, String remarks, boolean hasNewMail, Role roleObject) {
+			String newPassword, String email, String phoneNumber, Long parentUserId, List<Shop> shopList,
+			Long defaultShopId, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate,
+			String role, String[] authorities, boolean isActive, boolean isNotLocked, String addressLine1,
+			String addressLine2, String addressLine3, String state, String pinCode, String remarks, Long otp,
+			boolean hasNewMail, Role roleObject) {
 		super();
 		Id = id;
 		this.userId = userId;
@@ -145,6 +145,7 @@ public class User implements Serializable {
 		this.lastName = lastName;
 		this.username = username;
 		this.password = password;
+		this.newPassword = newPassword;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.parentUserId = parentUserId;
@@ -164,6 +165,7 @@ public class User implements Serializable {
 		this.state = state;
 		this.pinCode = pinCode;
 		this.remarks = remarks;
+		this.otp = otp;
 		this.hasNewMail = hasNewMail;
 		this.roleObject = roleObject;
 	}
@@ -214,6 +216,14 @@ public class User implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 
 	public String getEmail() {
@@ -384,6 +394,14 @@ public class User implements Serializable {
 		this.roleObject = roleObject;
 	}
 
+	public Long getOtp() {
+		return otp;
+	}
+
+	public void setOtp(Long otp) {
+		this.otp = otp;
+	}
+
 	@Override
 	public String toString() {
 		return "User [" + (Id != null ? "Id=" + Id + ", " : "") + (userId != null ? "userId=" + userId + ", " : "")
@@ -391,6 +409,7 @@ public class User implements Serializable {
 				+ (lastName != null ? "lastName=" + lastName + ", " : "")
 				+ (username != null ? "username=" + username + ", " : "")
 				+ (password != null ? "password=" + password + ", " : "")
+				+ (newPassword != null ? "newPassword=" + newPassword + ", " : "")
 				+ (email != null ? "email=" + email + ", " : "")
 				+ (phoneNumber != null ? "phoneNumber=" + phoneNumber + ", " : "")
 				+ (parentUserId != null ? "parentUserId=" + parentUserId + ", " : "")
@@ -406,11 +425,8 @@ public class User implements Serializable {
 				+ (addressLine2 != null ? "addressLine2=" + addressLine2 + ", " : "")
 				+ (addressLine3 != null ? "addressLine3=" + addressLine3 + ", " : "")
 				+ (state != null ? "state=" + state + ", " : "") + (pinCode != null ? "pinCode=" + pinCode + ", " : "")
-				+ (remarks != null ? "remarks=" + remarks + ", " : "") + "hasNewMail=" + hasNewMail + ", "
-				+ (roleObject != null ? "roleObject=" + roleObject : "") + "]";
+				+ (remarks != null ? "remarks=" + remarks + ", " : "") + (otp != null ? "otp=" + otp + ", " : "")
+				+ "hasNewMail=" + hasNewMail + ", " + (roleObject != null ? "roleObject=" + roleObject : "") + "]";
 	}
-
-
-	
 
 }

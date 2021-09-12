@@ -29,6 +29,43 @@ import com.gopro.queryconstant.QueryConstant;
 // Need to create one more filed constructor with above fields
 @NamedNativeQuery(name = "findAllNotification", query = QueryConstant.FIND_ALL_NOTIFICATION_SEARCH, resultClass = Notification.class, resultSetMapping = "findAllNotification")
 
+@SqlResultSetMapping(name = "findInboxNotification", classes = @ConstructorResult(targetClass = com.gopro.bene.Notification.class, columns = {
+		@ColumnResult(name = "notificationId", type = Long.class),
+		@ColumnResult(name = "notificationType", type = String.class),
+		@ColumnResult(name = "Subject", type = String.class),
+		@ColumnResult(name = "notificationStartData", type = Date.class),
+		@ColumnResult(name = "notificationLatUpdateDate", type = Date.class) }))
+// Need to create one more filed constructor with above fields
+@NamedNativeQuery(name = "findInboxNotification", query = QueryConstant.FIND_INBOX_NOTIFICATION_SEARCH, resultClass = Notification.class, resultSetMapping = "findInboxNotification")
+
+@SqlResultSetMapping(name = "findSendNotification", classes = @ConstructorResult(targetClass = com.gopro.bene.Notification.class, columns = {
+		@ColumnResult(name = "notificationId", type = Long.class),
+		@ColumnResult(name = "notificationType", type = String.class),
+		@ColumnResult(name = "Subject", type = String.class),
+		@ColumnResult(name = "notificationStartData", type = Date.class),
+		@ColumnResult(name = "notificationLatUpdateDate", type = Date.class) }))
+// Need to create one more filed constructor with above fields
+@NamedNativeQuery(name = "findSendNotification", query = QueryConstant.FIND_SEND_NOTIFICATION_SEARCH, resultClass = Notification.class, resultSetMapping = "findSendNotification")
+
+@SqlResultSetMapping(name = "findStaredNotification", classes = @ConstructorResult(targetClass = com.gopro.bene.Notification.class, columns = {
+		@ColumnResult(name = "notificationId", type = Long.class),
+		@ColumnResult(name = "notificationType", type = String.class),
+		@ColumnResult(name = "Subject", type = String.class),
+		@ColumnResult(name = "notificationStartData", type = Date.class),
+		@ColumnResult(name = "notificationLatUpdateDate", type = Date.class) }))
+// Need to create one more filed constructor with above fields
+@NamedNativeQuery(name = "findStaredNotification", query = QueryConstant.FIND_STARED_NOTIFICATION_SEARCH, resultClass = Notification.class, resultSetMapping = "findStaredNotification")
+
+
+@SqlResultSetMapping(name = "findImportantNotification", classes = @ConstructorResult(targetClass = com.gopro.bene.Notification.class, columns = {
+		@ColumnResult(name = "notificationId", type = Long.class),
+		@ColumnResult(name = "notificationType", type = String.class),
+		@ColumnResult(name = "Subject", type = String.class),
+		@ColumnResult(name = "notificationStartData", type = Date.class),
+		@ColumnResult(name = "notificationLatUpdateDate", type = Date.class) }))
+// Need to create one more filed constructor with above fields
+@NamedNativeQuery(name = "findImportantNotification", query = QueryConstant.FIND_IMPORTANT_NOTIFICATION_SEARCH, resultClass = Notification.class, resultSetMapping = "findImportantNotification")
+
 @SqlResultSetMapping(name = "findNotificationById", classes = @ConstructorResult(targetClass = com.gopro.bene.Notification.class, columns = {
 		@ColumnResult(name = "notificationId", type = Long.class),
 		@ColumnResult(name = "notificationType", type = String.class),
