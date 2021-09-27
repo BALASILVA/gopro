@@ -14,8 +14,7 @@ public class CommanServiceImpl implements CommanService {
 		Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, noOfDays); //minus number would decrement the days
-        date  = cal.getTime();	
-        System.out.println(date);
+        date  = cal.getTime();	        
         return date;
 	}
 	
@@ -27,6 +26,45 @@ public class CommanServiceImpl implements CommanService {
         cal.set(Calendar.MINUTE,59);
         cal.set(Calendar.SECOND,59);
         cal.set(Calendar.MILLISECOND,999);
+        date = cal.getTime();        
+        return date;
+	}
+	
+	@Override
+	public Date minimumTimeOfDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY,00);
+        cal.set(Calendar.MINUTE,00);
+        cal.set(Calendar.SECOND,00);
+        cal.set(Calendar.MILLISECOND,000);
+        date = cal.getTime();        
+        return date;
+	}
+
+	@Override
+	public Date oneWeekBeforeDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(date);                
+        cal.add(Calendar.DATE,-7);
+        cal.set(Calendar.HOUR_OF_DAY,00);
+        cal.set(Calendar.MINUTE,00);
+        cal.set(Calendar.SECOND,00);
+        cal.set(Calendar.MILLISECOND,000);
+        date = cal.getTime();        
+        return date;
+	}
+
+	@Override
+	public Date oneMounthBeforeDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH,-12);
+        cal.set(Calendar.DATE,00);
+        cal.set(Calendar.HOUR_OF_DAY,00);
+        cal.set(Calendar.MINUTE,00);
+        cal.set(Calendar.SECOND,00);
+        cal.set(Calendar.MILLISECOND,000);
         date = cal.getTime();        
         return date;
 	}

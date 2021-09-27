@@ -32,8 +32,19 @@ import com.gopro.queryconstant.QueryConstant;
 		@ColumnResult(name = "paymentType", type = String.class), @ColumnResult(name = "date", type = Date.class),
 		@ColumnResult(name = "shopId", type = Long.class), @ColumnResult(name = "userId", type = Long.class),
 		@ColumnResult(name = "userName", type = String.class), @ColumnResult(name = "remarks", type = String.class) }))
-// Need to create one more filed constructor with above fields
 @NamedNativeQuery(name = "findAllInvoiceMapping", query = QueryConstant.FIND_ALL_INVOICE_SEARCH, resultClass = Invoice.class, resultSetMapping = "findAllInvoiceMapping")
+
+@SqlResultSetMapping(name = "getDefaultShopSalesListByWeek", classes = @ConstructorResult(targetClass = com.gopro.bene.Invoice.class, columns = {
+		@ColumnResult(name = "totalPrice", type = Double.class),
+		@ColumnResult(name = "date", type = Date.class)
+		}))
+@NamedNativeQuery(name = "getDefaultShopSalesListByWeek", query = QueryConstant.SALES_LIST_BY_WEEK_DEFAUL_SHOP, resultClass = Invoice.class, resultSetMapping = "getDefaultShopSalesListByWeek")
+
+@SqlResultSetMapping(name = "getDefaultShopSalesListByMounth", classes = @ConstructorResult(targetClass = com.gopro.bene.Invoice.class, columns = {
+		@ColumnResult(name = "totalPrice", type = Double.class),
+		@ColumnResult(name = "date", type = Date.class)
+		}))
+@NamedNativeQuery(name = "getDefaultShopSalesListByMounth", query = QueryConstant.SALES_LIST_BY_MOUNTH_DEFAUL_SHOP, resultClass = Invoice.class, resultSetMapping = "getDefaultShopSalesListByMounth")
 @Entity
 @Table(name = "invoice")
 public class Invoice {
@@ -104,6 +115,12 @@ public class Invoice {
 		this.userName = userName;
 		this.remarks = remarks;
 	}
+	
+	public Invoice(Double totalPrice, Date date) {
+		this.totalPrice = totalPrice;
+		this.date = date;
+	}
+
 	// Dont removed This constructor
 	
 	

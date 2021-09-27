@@ -8,4 +8,9 @@ public class CommanConstants {
 
 	public static final Long NULL = null;
 	
+	public static final String WEAK = "W";
+	
+	public static final String MOUNTH = "M";
+	
+	public static final String YEAR ="Y";
 }

@@ -92,6 +92,9 @@ public class SearchCredentialDTO {
 	private int roleId;
 	private String roleName;
 
+	// DashBorad
+	private String salesListDayOrMounth;
+
 	public SearchCredentialDTO() {
 	}
 
@@ -107,7 +110,7 @@ public class SearchCredentialDTO {
 			String remarks, Long notificationId, String notificationType, String subject, boolean isSystemGenerated,
 			Date notificationLatUpdateDate, Long notificationMessageMapId, Long sendFrom, String message, Date time,
 			Long notificationUserMapId, String mappingType, Long sendTo, boolean isFavorite, boolean isDeleted,
-			boolean isReaded, Date readTime, int roleId, String roleName) {
+			boolean isReaded, Date readTime, int roleId, String roleName, String salesListDayOrMounth) {
 		super();
 		this.page = page;
 		this.size = size;
@@ -175,6 +178,7 @@ public class SearchCredentialDTO {
 		this.readTime = readTime;
 		this.roleId = roleId;
 		this.roleName = roleName;
+		this.salesListDayOrMounth = salesListDayOrMounth;
 	}
 
 	public int getPage() {
@@ -705,6 +709,14 @@ public class SearchCredentialDTO {
 		this.roleName = roleName;
 	}
 
+	public String getSalesListDayOrMounth() {
+		return salesListDayOrMounth;
+	}
+
+	public void setSalesListDayOrMounth(String salesListDayOrMounth) {
+		this.salesListDayOrMounth = salesListDayOrMounth;
+	}
+
 	@Override
 	public String toString() {
 		return "SearchCredentialDTO [page=" + page + ", size=" + size + ", "
@@ -762,7 +774,8 @@ public class SearchCredentialDTO {
 				+ (mappingType != null ? "mappingType=" + mappingType + ", " : "")
 				+ (sendTo != null ? "sendTo=" + sendTo + ", " : "") + "isFavorite=" + isFavorite + ", isDeleted="
 				+ isDeleted + ", isReaded=" + isReaded + ", " + (readTime != null ? "readTime=" + readTime + ", " : "")
-				+ "roleId=" + roleId + ", " + (roleName != null ? "roleName=" + roleName : "") + "]";
+				+ "roleId=" + roleId + ", " + (roleName != null ? "roleName=" + roleName + ", " : "")
+				+ (salesListDayOrMounth != null ? "salesListDayOrMounth=" + salesListDayOrMounth : "") + "]";
 	}
 
 }

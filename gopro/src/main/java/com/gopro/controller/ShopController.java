@@ -65,4 +65,5 @@ public class ShopController {
 		Shop shop =  shopService.findById(shopId);
 		return new ResponseEntity<>(shop,OK);
 	}
+	
 }

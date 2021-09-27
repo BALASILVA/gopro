@@ -2,6 +2,7 @@ package com.gopro.repository;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,16 @@ public interface InvoiceRepo extends PagingAndSortingRepository<Invoice, Long> {
 			@Param("searchKeyWord") String searchKeyWord, @Param("shopId") Long shopId,
 			@Param("userId")Long userId,Pageable pageable);
 
+	@Query(value = "select sum(totalprice)  from invoice where shopid = :defaultShopId and date >= :date", nativeQuery = true)
+	Long getDefaultShopTodaySales(@Param("defaultShopId")Long defaultShopId,@Param("date") Date minimumTimeOfDate);
+	
+	@Query(value = "select sum(totalprice)  from invoice inv inner join user_shop_list shp on shp.user_id = :userId where shopid in (shp.shop_list_shopid) and date >= :date", nativeQuery = true)
+	Long getUserAllShopTodaySales(@Param("userId")Long userId,@Param("date")Date minimumTimeOfDate);
 
+	@Query(nativeQuery = true, name = "getDefaultShopSalesListByWeek")
+	List<Invoice> getDefaultShopSalesListByWeek(@Param("defaultShopId")Long defaultShopId,@Param("oneWeekBeforeDate")Date oneWeekBeforeDate);
+
+	@Query(nativeQuery = true, name = "getDefaultShopSalesListByMounth")
+	List<Invoice> getDefaultShopSalesListByMounth(@Param("defaultShopId")Long defaultShopId,@Param("oneWeekBeforeDate")Date oneMounthBeforeDate);
 	
 }

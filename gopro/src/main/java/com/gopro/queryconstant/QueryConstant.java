@@ -5,6 +5,10 @@ public interface QueryConstant {
 	// Invoice Module
 	public static final String FIND_ALL_INVOICE_SEARCH = "SELECT inv.invoiceId,inv.customerMobileNo,inv.noOfProduct,inv.totalPrice, inv.paymentType, inv.date,inv.shopId,inv.userId,inv.userName,inv.remarks FROM Invoice inv WHERE inv.invoiceId  = Ifnull(:invoiceId, inv.invoiceId) AND (inv.customerMobileNo = Ifnull(:customerMobileNo, inv.customerMobileNo) OR inv.customerMobileNo is null) AND Upper(inv.noOfProduct)= Upper(Ifnull(:noOfProduct, inv.noOfProduct)) AND inv.totalPrice BETWEEN Ifnull(:startPrice, inv.totalPrice) AND Ifnull(:endPrice, inv.totalPrice) AND ((date >= :fromDate OR :fromDate IS NULL) AND (date <= :toDate OR :toDate IS NULL) ) AND Upper(inv.paymentType) = Upper(Ifnull(:paymentType, inv.paymentType)) AND inv.userId  = Ifnull(:userId, inv.userId) AND Concat_ws(inv.invoiceId,inv.customerMobileNo,inv.noOfProduct, inv.totalPrice, inv.date, inv.paymentType, inv.userName) LIKE :searchKeyWord AND inv.shopId = :shopId";
 	
+	public static final String SALES_LIST_BY_WEEK_DEFAUL_SHOP = "select sum(totalPrice) totalPrice , date from invoice where shopid = :defaultShopId and date >= :oneWeekBeforeDate group by DATE_FORMAT(date,'%Y-%M-%D')";
+	
+	public static final String SALES_LIST_BY_MOUNTH_DEFAUL_SHOP = "select sum(totalPrice) totalPrice , date from invoice where shopid = :defaultShopId and date >= :oneWeekBeforeDate group by DATE_FORMAT(date,'%Y-%M')";
+
 	// NotificationModule
 	public static final String FIND_NOTIFICATION_BY_INVOICE_ID = "select * from notification where invoiceId=:invoiceId";
 	
