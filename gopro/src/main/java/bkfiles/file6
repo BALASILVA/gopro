@@ -1,0 +1,22 @@
+
+
+
+frount end ( Angualar )   --  back end ( Spring boot )    -->   database (Sql)
+
+ 
+ 
+ controller        ->   service   -> repository 
+ 
+ @RequestMaping
+ /product
+ /user
+ /login
+ /register (User user)
+ 
+ 
+ s@gmail.com
+ sakthi@123
+ 
+ 
+ subuser@gmail.com
+ xIRpjUUS9j

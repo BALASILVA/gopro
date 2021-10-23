@@ -9,14 +9,23 @@ import org.springframework.stereotype.Service;
 public class CommanServiceImpl implements CommanService {
 
 	@Override
-	public Date incrementDate(Date date, int noOfDays) {
-		System.out.println(date+ " " +noOfDays);
+	public Date incrementDate(Date date, int noOfDays) {		
 		Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DATE, noOfDays); //minus number would decrement the days
         date  = cal.getTime();	        
         return date;
 	}
+	
+	@Override
+	public Date incrementMounth(Date date, int noOfMouth) {
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, noOfMouth); //minus number would decrement the days
+        date  = cal.getTime();	        
+        return date;
+	}
+	
 	
 	@Override
 	public Date maximiumTimeOfDate(Date date) {
@@ -46,7 +55,7 @@ public class CommanServiceImpl implements CommanService {
 	public Date oneWeekBeforeDate(Date date) {
 		Calendar cal = Calendar.getInstance();
         cal.setTime(date);                
-        cal.add(Calendar.DATE,-7);
+        cal.add(Calendar.DATE,-6);
         cal.set(Calendar.HOUR_OF_DAY,00);
         cal.set(Calendar.MINUTE,00);
         cal.set(Calendar.SECOND,00);
@@ -59,7 +68,7 @@ public class CommanServiceImpl implements CommanService {
 	public Date oneMounthBeforeDate(Date date) {
 		Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.add(Calendar.MONTH,-12);
+        cal.add(Calendar.MONTH,-10);
         cal.set(Calendar.DATE,00);
         cal.set(Calendar.HOUR_OF_DAY,00);
         cal.set(Calendar.MINUTE,00);
@@ -68,5 +77,5 @@ public class CommanServiceImpl implements CommanService {
         date = cal.getTime();        
         return date;
 	}
-	
+
 }

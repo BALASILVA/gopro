@@ -53,7 +53,7 @@ public class InvoiceController {
 	}
 	
 	@PostMapping(value="/details")
-	public ResponseEntity<Invoice> getInvoiceDetail(@RequestBody Invoice invoice) {
+	public ResponseEntity<Invoice> getInvoiceDetail(@RequestBody Invoice invoice) throws Exception {
 		Invoice invoiceDetail = invoiceService.getInvoiceDetailById(invoice);
 		return new ResponseEntity<>(invoiceDetail, OK);
 	}

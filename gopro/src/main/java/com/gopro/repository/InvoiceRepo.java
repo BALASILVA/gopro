@@ -2,11 +2,11 @@ package com.gopro.repository;
 
 
 import java.util.Date;
+import static com.gopro.queryconstant.QueryConstant.FIND_ALL_INVOICE_SEARCH_TOTAL;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +25,18 @@ public interface InvoiceRepo extends PagingAndSortingRepository<Invoice, Long> {
 			@Param("searchKeyWord") String searchKeyWord, @Param("shopId") Long shopId,
 			@Param("userId")Long userId,Pageable pageable);
 
+	
+	
+	@Query(value = FIND_ALL_INVOICE_SEARCH_TOTAL,nativeQuery = true)
+	Long findSumAllOfInvoice(
+			@Param("invoiceId") Long invoiceId,
+			@Param("customerMobileNo") Long customerMobileNo,
+			@Param("noOfProduct") Long noOfProduct, @Param("startPrice") Double startPrice,
+			@Param("endPrice") Double endPrice, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
+			@Param("paymentType") String paymentType,
+			@Param("searchKeyWord") String searchKeyWord, @Param("shopId") Long shopId,
+			@Param("userId")Long userId);
+	
 	@Query(value = "select sum(totalprice)  from invoice where shopid = :defaultShopId and date >= :date", nativeQuery = true)
 	Long getDefaultShopTodaySales(@Param("defaultShopId")Long defaultShopId,@Param("date") Date minimumTimeOfDate);
 	

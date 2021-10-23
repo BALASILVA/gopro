@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -31,24 +33,28 @@ import com.gopro.bene.User;
 import com.gopro.constant.ExceptionMessage;
 import com.gopro.repository.ShopRepository;
 import com.gopro.repository.UserRepository;
+import com.gopro.validation.ShopValidation;
 
 @Service
 public class ShopServiceImpl implements ShopService {
 	
+	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private ShopRepository shopRepository;
 	private UserService userService;
-	AuthendicationFacade authenticationFacade;
+	private AuthendicationFacade authenticationFacade;
+	private ShopValidation shopValidation;
 	
 	@Autowired
-	public ShopServiceImpl(ShopRepository shopRepository,@Lazy AuthendicationFacade authenticationFacade,@Lazy UserService userService) {		
+	public ShopServiceImpl(ShopRepository shopRepository,@Lazy AuthendicationFacade authenticationFacade,@Lazy UserService userService, ShopValidation shopValidation) {		
 		this.shopRepository = shopRepository;
 		this.authenticationFacade = authenticationFacade;
 		this.userService  = userService;
+		this.shopValidation = shopValidation;
 	}
 
 	@Override
 	public List<Shop> findAllShopById(List<Shop> shopList) {
-		// TODO Auto-generated method stub
+		
 		List<Shop> retunList = new ArrayList<Shop>();
 		for (Shop shop : shopList) {
 			retunList.add(shopRepository.findShopByShopId(shop.getShopId()));
@@ -57,7 +63,7 @@ public class ShopServiceImpl implements ShopService {
 	}
 
 	@Override
-	public Page<Shop> getAllShopByParentUserId(SearchCredentialDTO searchCredentialDTO) {		
+	public Page<Shop> getAllShopByParentUserId(SearchCredentialDTO searchCredentialDTO) throws Exception {		
 		User loginUser = authenticationFacade.getCurrentUserDetails();
 		System.out.println(searchCredentialDTO);
 		Long parentUserId = 0L;
@@ -106,8 +112,9 @@ public class ShopServiceImpl implements ShopService {
 			}
 			return list;
 		} catch (Exception ex) {
-			System.out.println("Exception" + ex);
-			return null;
+			LOGGER.error("Exception Occured "+ex.getMessage());
+			LOGGER.debug("Search Parameter :: " +searchCredentialDTO);
+			throw new Exception();			
 		}
 		
 	}
@@ -136,7 +143,9 @@ public class ShopServiceImpl implements ShopService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Shop save(Shop shop) {
 		try {
+			shopValidation.validate(shop);
 			User loginUser = authenticationFacade.getCurrentUserDetails();
+			LOGGER.info("Try To create shop by user id :: "+loginUser.getId());
 			Long parentUserId = 0L;
 			if(loginUser.getParentUserId() == 0)		
 				parentUserId = loginUser.getId(); 
@@ -149,10 +158,13 @@ public class ShopServiceImpl implements ShopService {
 			for (User user : userList) {				
 				int count = shopRepository.addShopUserMapping(user.getId(),shopSaved.getShopId());
 			}
+			LOGGER.info("Shop Created Sucessfully shop id :: "+shopSaved.getShopId()+" || user id :: "+loginUser.getId());
 			return shopSaved;
 		}
 		catch(Exception ex)
 		{
+			LOGGER.error("Exception Occured "+ ex.getMessage());
+			LOGGER.debug("In Parameter :: " +shop);
 			throw new NoResultException(ExceptionMessage.TECNICAL_ERROR_OCCURED);			
 		}
 	}
@@ -175,9 +187,11 @@ public class ShopServiceImpl implements ShopService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public Shop update(Shop shop) {
-		
+	public Shop update(Shop shop) throws Exception {
+		try {
+		shopValidation.validate(shop);
 		User loginUser = authenticationFacade.getCurrentUserDetails();
+		LOGGER.info("Try to update shop id::"+shop.getShopId()+" || userId ::" +loginUser.getId());
 		Long parentUserId = 0L;
 		if (loginUser.getParentUserId() == 0)
 			parentUserId = loginUser.getId();
@@ -186,7 +200,22 @@ public class ShopServiceImpl implements ShopService {
 
 		int update = shopRepository.updateShopDetail(shop.getShopName(), shop.getPhone(), shop.getEmail(),
 				shop.getAddressLineOne(), shop.getShopId(), parentUserId);
+		LOGGER.info("Sucessfully update shop id::"+shop.getShopId()+" || userId ::" +loginUser.getId());
 		return shop;
+		}
+		catch (Exception ex) {
+			LOGGER.error("Exception Occured "+ ex.getMessage());
+			LOGGER.debug("In Parameter :: " +shop);
+			throw new Exception(ExceptionMessage.TECNICAL_ERROR_OCCURED);
+		}
+	}
+
+	@Override
+	public String getShopNameById(Long defaultShopId) {
+		
+		String shopName = shopRepository.findShopNameById(defaultShopId);
+		
+		return shopName;
 	}
 
 

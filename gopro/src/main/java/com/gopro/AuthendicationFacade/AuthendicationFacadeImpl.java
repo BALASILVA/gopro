@@ -24,7 +24,7 @@ public class AuthendicationFacadeImpl implements AuthendicationFacade {
 	public User getCurrentUserDetails() {
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username = authentication.toString();
-		User user = userService.findUserByUsername(username);	
+		User user = userService.findUserByUsernameForUserId(username);	
 		return user;
 	}
 	

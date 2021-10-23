@@ -1,5 +1,6 @@
 package com.gopro.bene;
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -7,9 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 
@@ -90,8 +88,11 @@ public class Invoice {
 
 	@Column(name = "remarks")
 	private String remarks;
-
-	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	
+	private Long totalPriceBulkInvoice;
+	
+	//@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "customerid")
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	private Customer customer;
@@ -124,9 +125,10 @@ public class Invoice {
 	// Dont removed This constructor
 	
 	
+	
 	public Invoice(Long invoiceId, Long customerMobileNo, List<InvoiceProductMap> invoiceProductMap, int noOfProduct,
 			Double totalPrice, String paymentType, boolean isRePrinted, int noOfTimeRePrinted, Date date, Long shopId,
-			Long userId, String userName, String remarks, Customer customer) {
+			Long userId, String userName, String remarks, Long totalPriceBulkInvoice, Customer customer) {
 		super();
 		this.invoiceId = invoiceId;
 		this.customerMobileNo = customerMobileNo;
@@ -141,8 +143,10 @@ public class Invoice {
 		this.userId = userId;
 		this.userName = userName;
 		this.remarks = remarks;
+		this.totalPriceBulkInvoice = totalPriceBulkInvoice;
 		this.customer = customer;
 	}
+
 
 	public Long getInvoiceId() {
 		return invoiceId;
@@ -248,6 +252,14 @@ public class Invoice {
 		this.remarks = remarks;
 	}
 
+	public Long getTotalPriceBulkInvoice() {
+		return totalPriceBulkInvoice;
+	}
+
+	public void setTotalPriceBulkInvoice(Long totalPriceBulkInvoice) {
+		this.totalPriceBulkInvoice = totalPriceBulkInvoice;
+	}
+
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -258,12 +270,22 @@ public class Invoice {
 
 	@Override
 	public String toString() {
-		return "Invoice [invoiceId=" + invoiceId + ", customerMobileNo=" + customerMobileNo + ", invoiceProductMap="
-				+ invoiceProductMap + ", noOfProduct=" + noOfProduct + ", totalPrice=" + totalPrice + ", paymentType="
-				+ paymentType + ", isRePrinted=" + isRePrinted + ", noOfTimeRePrinted=" + noOfTimeRePrinted + ", date="
-				+ date + ", shopId=" + shopId + ", userId=" + userId + ", userName=" + userName + ", remarks=" + remarks
-				+ ", customer=" + customer + "]";
+		return "Invoice [" + (invoiceId != null ? "invoiceId=" + invoiceId + ", " : "")
+				+ (customerMobileNo != null ? "customerMobileNo=" + customerMobileNo + ", " : "")
+				+ (invoiceProductMap != null ? "invoiceProductMap=" + invoiceProductMap + ", " : "") + "noOfProduct="
+				+ noOfProduct + ", " + (totalPrice != null ? "totalPrice=" + totalPrice + ", " : "")
+				+ (paymentType != null ? "paymentType=" + paymentType + ", " : "") + "isRePrinted=" + isRePrinted
+				+ ", noOfTimeRePrinted=" + noOfTimeRePrinted + ", " + (date != null ? "date=" + date + ", " : "")
+				+ (shopId != null ? "shopId=" + shopId + ", " : "") + (userId != null ? "userId=" + userId + ", " : "")
+				+ (userName != null ? "userName=" + userName + ", " : "")
+				+ (remarks != null ? "remarks=" + remarks + ", " : "")
+				+ (totalPriceBulkInvoice != null ? "totalPriceBulkInvoice=" + totalPriceBulkInvoice + ", " : "")
+				+ (customer != null ? "customer=" + customer : "") + "]";
 	}
+
+
+	
+	
 
 	
 }

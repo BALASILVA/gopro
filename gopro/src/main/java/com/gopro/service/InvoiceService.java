@@ -11,7 +11,7 @@ public interface InvoiceService {
 
 	Invoice add(Invoice invoice);
 
-	Invoice getInvoiceDetailById(Invoice invoice);
+	Invoice getInvoiceDetailById(Invoice invoice) throws Exception;
 
 	Page<Invoice> getAllInvoicePaginationAndSorting(SearchCredentialDTO searchCredentialDTO);
 

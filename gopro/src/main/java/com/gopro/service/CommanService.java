@@ -12,6 +12,8 @@ public interface CommanService {
 
 	Date oneWeekBeforeDate(Date date);
 
-	Date oneMounthBeforeDate(Date date);	
+	Date oneMounthBeforeDate(Date date);
+
+	Date incrementMounth(Date oneMounthBeforeDate, int i);	
 
 }

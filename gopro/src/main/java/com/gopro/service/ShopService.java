@@ -18,14 +18,16 @@ public interface ShopService {
 	
 	List<Shop> getAllShopByParentUserId(Long id);
 
-	Page<Shop> getAllShopByParentUserId(SearchCredentialDTO searchCredentialDTO);
+	Page<Shop> getAllShopByParentUserId(SearchCredentialDTO searchCredentialDTO) throws Exception;
 
 	boolean updateUserId(Long shopId, Long id);
 
 	Shop findById(Long shopId);
 
-	Shop update(Shop shop);
+	Shop update(Shop shop) throws Exception;
 
 	List<Shop> getAllShopNameByParentUserId();
+
+	String getShopNameById(Long defaultShopId);
 
 }

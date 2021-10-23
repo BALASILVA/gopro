@@ -1,0 +1,5 @@
+SELECT R.shopid, R.shopname, R.phone,IFNULL(R.totalsale, 0) totalsale,IFNULL(R.todaysale, 0) todaysale
+ FROM (SELECT SHP.shopid, SHP.shopname, SHP.phone, SHP.totalsale, Sum(INV.totalprice) AS todaysale FROM  
+ shop SHP INNER JOIN invoice INV ON INV.shopid = SHP.shopid AND INV.date >= 'Fri Aug 27 00:00:00 IST 2021' WHERE  SHP.userid = 420
+ AND Concat_ws(SHP.shopid, SHP.shopname, SHP.totalsale, SHP.phone) LIKE '%%' group by SHP.shopid, SHP.shopname, SHP.phone UNION ALL SELECT SHP.shopid, SHP.shopname, SHP.phone, SHP.totalsale, 0 AS todaysale 
+FROM   shop SHP INNER JOIN invoice INV ON INV.shopid <> SHP.shopid AND INV.date >= 'Fri Aug 27 00:00:00 IST 2021' WHERE  SHP.userid = 420 AND Concat_ws(SHP.shopid, SHP.shopname, SHP.totalsale, SHP.phone) LIKE '%%' )R group by R.shopid, R.shopname, R.phone

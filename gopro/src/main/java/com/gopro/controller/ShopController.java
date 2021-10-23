@@ -43,13 +43,13 @@ public class ShopController {
     }
     
     @PostMapping(value="/update")
-    public Shop update(@RequestBody Shop shop)
+    public Shop update(@RequestBody Shop shop) throws Exception
     {
     	return  shopService.update(shop);
     }
     
 	@PostMapping
-	public Page<Shop> getAllShop(@RequestBody SearchCredentialDTO searchCredentialDTO)
+	public Page<Shop> getAllShop(@RequestBody SearchCredentialDTO searchCredentialDTO) throws Exception
 	{
 		return shopService.getAllShopByParentUserId(searchCredentialDTO);		
 	}

@@ -1,0 +1,40 @@
+	public menuId : number;
+	public int menuQueue : number;
+	public menuName : string;
+	public String menuIconName  : string;
+	public String menuIconColour : string;
+	public String menuTextColour : string;
+	public String link : string;
+	public boolean hasLink : boolean;
+	public boolean hasChildMenu : boolean;
+	public boolean isOpenDefault : boolean;
+	public boolean hasRightButton : boolean;
+	public String rightButtonLink : string;
+	public String rightButtonName : string;
+	public String rightButtonIconName : string;
+	public String rightButtonIconColour : string;
+	public boolean isActive:boolean;
+	public Date createdDate:Date;
+	public childMenuList : ChildMenu[];
+	
+	constructor()
+	{
+	    this.menuId = null;
+	    this.int menuQueue = null;
+	    this.menuName = null;
+	    this.String menuIconName  = null;
+	    this.String menuIconColour = null;
+	    this.String menuTextColour = null;
+	    this.String link = null;
+	    this.boolean hasLink = false;
+	    this.boolean hasChildMenu = false;
+	    this.boolean isOpenDefault = false;
+	    this.boolean hasRightButton = false;
+	    this.String rightButtonLink = null;
+	    this.String rightButtonName = null;
+	    this.String rightButtonIconName = null;
+	    this.String rightButtonIconColour= null;
+	    this.boolean isActive = false;
+	    this.Date createdDate = null
+	    this.childMenuList  = [];	
+	}

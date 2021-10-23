@@ -29,11 +29,11 @@ public interface UserService {
 
     User findUserByEmail(String email);
 
-	Page<User> getAllUserPaginationAndSorting(SearchCredentialDTO searchCredentialDTO);
+	Page<User> getAllUserPaginationAndSorting(SearchCredentialDTO searchCredentialDTO) throws Exception;
 
 
 	User updateUser(Long id, String firstName, String phoneNumber, String addressLine1, List<Shop> shopList,
-			Role roleObject, String remarks)  throws UserNotFoundException;
+			Role roleObject, String remarks)  throws UserNotFoundException, Exception;
 
 	boolean updateDefaultShop(Shop shop);
 
@@ -56,5 +56,7 @@ public interface UserService {
 	boolean deleteUser(User userFromDB);
 
 	boolean isMailAvailable(String email) ;
+
+	User findUserByUsernameForUserId(String username);
     
 }

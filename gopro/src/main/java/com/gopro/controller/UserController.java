@@ -14,6 +14,10 @@ import com.gopro.exception.domain.UsernameExistException;
 import com.gopro.service.AuthorityService;
 import com.gopro.service.UserService;
 import com.gopro.utility.JWTTokenProvider;
+import com.gopro.validation.UserValidation;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.gopro.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.util.InputMismatchException;
 import java.util.List;
 
 
@@ -44,20 +49,26 @@ public class UserController extends ExceptionHandling {
 	private AuthorityService authorityService;
 	private JWTTokenProvider jwtTokenProvider;
 	private AuthendicationFacade authendicationFacade;
+	private UserValidation userValidation;
 
+	Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	
 	@Autowired
 	public UserController(AuthenticationManager authenticationManager, UserService userService,
-			JWTTokenProvider jwtTokenProvider,AuthorityService authorityService,AuthendicationFacade authendicationFacade) {
+			JWTTokenProvider jwtTokenProvider,AuthorityService authorityService,AuthendicationFacade authendicationFacade,UserValidation userValidation) {
 		this.authenticationManager = authenticationManager;
 		this.userService = userService;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.authorityService = authorityService;
 		this.authendicationFacade = authendicationFacade;
+		this.userValidation = userValidation;
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestBody User user) {
-		//User Name and Email are same in DB
+
+		LOGGER.info("User "+user.getEmail()+ " Try to Login");
+		userValidation.validateLogInUserDetail(user.getEmail(), user.getPassword());
 		authenticate(user.getEmail(), user.getPassword());
 		User loginUser = userService.findUserByUsername(user.getEmail());
 
@@ -74,33 +85,41 @@ public class UserController extends ExceptionHandling {
 		
 		userPrincipal.setUser(loginUser);
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
+		LOGGER.info("User "+user.getEmail()+ " Sucessfully Login");
 		return new ResponseEntity<>(loginUser, jwtHeader, OK);
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<User> register(@RequestBody User user)
-			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		User newUser = userService.register(user.getFirstName(),user.getShopList().get(0), user.getEmail(),user.getPhoneNumber(), user.getPassword(), user.getPhoneNumber(), user.getOtp());
-		return new ResponseEntity<>(newUser, OK);
+			throws UserNotFoundException, UsernameExistException, EmailExistException,InputMismatchException, Exception  {
+			LOGGER.info("/register controller START  with userName "+ user.getFirstName() + "Email :: "+user.getEmail());
+			userValidation.validationUserForRegister(user);	
+			User newUser = userService.register(user.getFirstName(),user.getShopList().get(0), user.getEmail(),user.getPhoneNumber(), user.getPassword(), user.getPhoneNumber(), user.getOtp());
+			LOGGER.info("/register controller END called with userName "+ user.getFirstName() + "Email :: "+user.getEmail());
+			return new ResponseEntity<>(newUser, OK);
 	}
 
 	@PostMapping("/add")
 	public ResponseEntity<User> addNewUser(@RequestBody User user)
-			throws UserNotFoundException, UsernameExistException, EmailExistException,Exception {		
+			throws UserNotFoundException, UsernameExistException, EmailExistException,Exception {
+		userValidation.validateAddSubUserDetails(user.getFirstName(),user.getLastName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
 		User newUser = userService.addNewUser(user.getFirstName(),user.getLastName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
-		if(newUser == null)
+		if(newUser == null) {
+			LOGGER.error("TecnicalError occured User Detail is null");
 			throw new Exception(UserImplConstant.TECHINICAL_ERROR_OCCURED);
-		
+		}
 		return new ResponseEntity<>(newUser, OK);
 	}
 	
 	@PostMapping("/update")
 	public ResponseEntity<User> updateUser(@RequestBody User user)
-			throws UserNotFoundException, UsernameExistException, EmailExistException, Exception {
-		System.out.println("Rem "+user.getRemarks());
+			throws UserNotFoundException, UsernameExistException, EmailExistException, Exception {		
+		userValidation.validateAddSubUserDetails(user.getFirstName(),user.getLastName(),user.getEmail(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
 		User updatedUser = userService.updateUser(user.getId(),user.getFirstName(),user.getPhoneNumber(),user.getAddressLine1(),user.getShopList(),user.getRoleObject(),user.getRemarks());
-		if(updatedUser == null)
+		if(updatedUser == null) {
+			LOGGER.error("Updare Failed Techical Error occured User Detail is null");
 			throw new Exception(UserImplConstant.TECHINICAL_ERROR_OCCURED);
+		}
 		return new ResponseEntity<>(updatedUser, OK);
 	}
 	
@@ -114,18 +133,19 @@ public class UserController extends ExceptionHandling {
 	
 	@PostMapping
 	public ResponseEntity<Page<User>> getAllUser(@RequestBody SearchCredentialDTO searchCredentialDTO)
-			throws UserNotFoundException, UsernameExistException, EmailExistException {
+			throws Exception {
 		Page<User> userList = userService.getAllUserPaginationAndSorting(searchCredentialDTO);
 		return new ResponseEntity<>(userList, OK);
 	}	
 	
 	@PostMapping("/changepassword")
 	public ResponseEntity<Boolean> changePassword(@RequestBody User user)
-			throws UserNotFoundException, UsernameExistException, EmailExistException {
-		User loginUser = authendicationFacade.getCurrentUserDetails();
+			throws UserNotFoundException, UsernameExistException, EmailExistException {		
+		userValidation.validateChangePassword(user.getPassword());
+		userValidation.validateChangePassword(user.getNewPassword());		
+		User loginUser = authendicationFacade.getCurrentUserDetails();		
 		authenticate(loginUser.getEmail(), user.getPassword());		
-		boolean isUpdated = userService.changePassword(loginUser.getId(),user.getNewPassword());
-		
+		boolean isUpdated = userService.changePassword(loginUser.getId(),user.getNewPassword());		
 		return new ResponseEntity<>(isUpdated, OK);
 	}
 	

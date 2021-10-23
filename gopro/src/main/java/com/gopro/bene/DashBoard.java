@@ -10,13 +10,14 @@ public class DashBoard {
 	private List<Invoice> defaultShopSalesListWeek;
 	private List<Invoice> defaultShopSalesListMounth;
 	private List<Invoice> allShopsSalesList;
+	private String shopName;
 
 	public DashBoard() {
 	}
 
 	public DashBoard(String defaultShopName, Long defaultShopTotalSales, Long allShopTotalSales,
 			List<Invoice> defaultShopSalesListWeek, List<Invoice> defaultShopSalesListMounth,
-			List<Invoice> allShopsSalesList) {
+			List<Invoice> allShopsSalesList, String shopName) {
 		super();
 		this.defaultShopName = defaultShopName;
 		this.defaultShopTotalSales = defaultShopTotalSales;
@@ -24,6 +25,7 @@ public class DashBoard {
 		this.defaultShopSalesListWeek = defaultShopSalesListWeek;
 		this.defaultShopSalesListMounth = defaultShopSalesListMounth;
 		this.allShopsSalesList = allShopsSalesList;
+		this.shopName = shopName;
 	}
 
 	public String getDefaultShopName() {
@@ -74,6 +76,14 @@ public class DashBoard {
 		this.allShopsSalesList = allShopsSalesList;
 	}
 
+	public String getShopName() {
+		return shopName;
+	}
+
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
+
 	@Override
 	public String toString() {
 		return "DashBoard [" + (defaultShopName != null ? "defaultShopName=" + defaultShopName + ", " : "")
@@ -84,7 +94,8 @@ public class DashBoard {
 				+ (defaultShopSalesListMounth != null
 						? "defaultShopSalesListMounth=" + defaultShopSalesListMounth + ", "
 						: "")
-				+ (allShopsSalesList != null ? "allShopsSalesList=" + allShopsSalesList : "") + "]";
+				+ (allShopsSalesList != null ? "allShopsSalesList=" + allShopsSalesList + ", " : "")
+				+ (shopName != null ? "shopName=" + shopName : "") + "]";
 	}
 
 }

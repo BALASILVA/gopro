@@ -7,5 +7,5 @@ public interface EmailSenderService {
 
 	boolean sendOTP(String toEmail,String body,String subject);
 
-	boolean sendEmailOTP(OTPDto otpDto);
+	boolean sendEmailOTP(OTPDto otpDto) throws Exception;
 }

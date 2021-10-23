@@ -13,4 +13,10 @@ public class CommanConstants {
 	public static final String MOUNTH = "M";
 	
 	public static final String YEAR ="Y";
+	
+	public static final int MAXIMUM_USER_INPUT_LENGTH = 250;
+	
+	public static final int OTP_LENGTG = 6;
+	
+	public static final int PASSWORD_MIN_LENGTG = 8;
 }

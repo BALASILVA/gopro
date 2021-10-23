@@ -1,0 +1,49 @@
+All Anguar cmd
+
+To Generate Lazy Loading module
+   
+ 
+cd E:\My Work\AUTH_ROLEBASE_WORK\AUTH_FRONT_END\gopro\src\app>	
+//Latest	
+   ng generate module modules/notification --route inbox --module app.module   
+//Old   
+   ng generate module module/products --route products --module app.module
+   
+   
+   
+   
+installed npm 
+
+npm install ngx-mat-select-search
+
+
+-- electron
+
+npm i -D electron@latest
+
+npm run electron-start
+
+ng build --base-href "./"
+
+
+Hibernate: update user set hasnewmail=? where id in (?)
+2021-07-10 06:13:18.200 ERROR 1012 --- [nio-8081-exec-4] com.gopro.controller.UserController      : Executing an update/delete query; nested exception is javax.persistence.TransactionRequiredException: Executing an update/delete query
+
+
+
+
+in package.json add some details for electon cofig
+
+
+instaleed depenc
+*****************
+npm i ngx-electron
+npm i -D electron@latest
+npm install ngx-mat-select-search
+-- printer.js
+
+npm i printer
+
+npm install node-thermal-printer
+
+'POS-58-Series'

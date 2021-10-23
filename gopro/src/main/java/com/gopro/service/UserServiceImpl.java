@@ -4,7 +4,6 @@ package com.gopro.service;
 import com.gopro.AuthendicationFacade.AuthendicationFacade;
 
 import com.gopro.bene.Authority;
-import com.gopro.bene.Menu;
 import com.gopro.bene.Role;
 import com.gopro.bene.SearchCredentialDTO;
 import com.gopro.bene.Shop;
@@ -112,6 +111,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User register(String userName, Shop shop, String email,String phone, String password, String phoneNumber,Long otp)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
 		
+		LOGGER.info("Registering User For User Name :: "+userName);
 		validateOTP(userName,email,otp);
 		validateNewUsernameAndEmail(EMPTY, email);
 		shop.setPhone(phoneNumber);
@@ -145,7 +145,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		//user.setProfileImageUrl(getTemporaryProfileImageUrl());
 		user = userRepository.save(user);
 		shop.setUserId(user.getId());
-		boolean isUpdated = shopService.updateUserId(shop.getShopId(),user.getId());		
+		boolean isUpdated = shopService.updateUserId(shop.getShopId(),user.getId());
+		LOGGER.info("User Created For User Name :: "+userName);
 		return user;
 	}
 
@@ -154,6 +155,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User addNewUser( String firstName,String lastName, String email, String phoneNumber, String addressLine1,
 			List<Shop> shopList, Role role, String remarks)
 			throws UserNotFoundException, UsernameExistException, EmailExistException,Exception {
+		
+		LOGGER.info("Createing new Sub User With name:: "+firstName + " email :: "+email);
 		
 		validateNewUsernameAndEmail(EMPTY, email);
 		
@@ -202,14 +205,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		
 		//user.setProfileImageUrl(getTemporaryProfileImageUrl());
 		User userFromDB = userRepository.save(user);
-		
+		LOGGER.info("Inserted in DB, Createing new Sub User With name:: "+firstName + " email :: "+email);
 		boolean isMailSend = false;
 		if(userFromDB != null) {
+			LOGGER.info("Try to send User Name and Password For new Sub User with email :: "+user.getEmail());
 			isMailSend = emailSenderService.sendOTP(user.getEmail(), "Your user Name"+user.getEmail() +"  Your password: "+pass,  "Accound Creted");
+			LOGGER.info("Sucessfully send User Name and Password For new Sub User with email :: "+user.getEmail());
 		}
 		
 		if(!isMailSend) {
-			deleteUser(userFromDB);			
+			LOGGER.error("Failed to send User Name and Password For new Sub User with email :: "+user.getEmail());
+			deleteUser(userFromDB);
 			throw new SendFailedException(ExceptionMessage.SEND_MAIL_EXCEPTION);			
 		}
 		
@@ -219,11 +225,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public boolean deleteUser(User userFromDB) {
 		try {
+			LOGGER.info("Deleting User With User with email :: "+userFromDB.getEmail());
 			userRepository.deleteUserShopMaping(userFromDB.getId());
 			userRepository.deleteByIdCustom(userFromDB.getId());
+			LOGGER.info("Sucessfully Deleted User With User with email :: "+userFromDB.getEmail());
 		}
 		catch(Exception ex)
 		{
+			LOGGER.info("Exception Occur While deleting user Email :: "+userFromDB.getEmail()+ " || Ex-Message :: "+ex.getMessage());
 			return false;
 		}
 		return true;
@@ -231,16 +240,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public boolean changePassword(Long userId, String newPassword) {
+		LOGGER.info("Change Password for User Id :: "+userId);		
 		User userFromDb = authendicationFacade.getCurrentUserDetails();
-		String encPassword = encodePassword(newPassword);
-		System.out.println(encPassword+"cnt");
+		String encPassword = encodePassword(newPassword);		
 		int updateCount = userRepository.updatePassword(userId,encPassword);
-		System.out.println(updateCount+"cnt");
+		LOGGER.info("Sucessfully Updated Password for User Id :: "+userId);
 		return updateCount>0;
 	}
 	
 	@Override
-	public Page<User> getAllUserPaginationAndSorting(SearchCredentialDTO searchCredentialDTO) {
+	public Page<User> getAllUserPaginationAndSorting(SearchCredentialDTO searchCredentialDTO) throws Exception {
 		User userFromDb = authendicationFacade.getCurrentUserDetails();
 		
 		// Updating User details from data base for security
@@ -295,14 +304,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 					searchCredentialDTO.getEmail(), searchCredentialDTO.getPhoneNumber(),
 					searchCredentialDTO.getRoleId() == 0 ? null : (long) searchCredentialDTO.getRoleId(),
 					searchCredentialDTO.getSearchKeyWord(), pageable);
-			System.out.println(searchCredentialDTO.getId()+""+
-					searchCredentialDTO.getParentUserId());
-			System.out.println(list.getSize());
-			System.out.println(list.getContent().toString());
 			return list;
 		} catch (Exception ex) {
-			System.out.println("Exception" + ex);
-			return null;
+			LOGGER.error("Exception Occred "+ex.getMessage());
+			throw new Exception();
 		}
 	}
 
@@ -315,6 +320,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User findUserByUsername(String username) {
 		User user = userRepository.findUserByUsername(username);					
 		user.getRoleObject().setMenuList(menuService.findMenuByUserId(user.getId()));
+		return user;
+	}
+	
+	@Override
+	public User findUserByUsernameForUserId(String username) {
+		User user = userRepository.findUserByUsername(username);							
 		return user;
 	}
 
@@ -351,15 +362,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (StringUtils.isNotBlank(currentUsername)) {
 			User currentUser = findUserByUsername(currentUsername);
 			if (currentUser == null) {
+				LOGGER.error(NO_USER_FOUND_BY_USERNAME + currentUsername);
 				throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
 			}
 
 			if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
+				LOGGER.error(EMAIL_ALREADY_EXISTS + newEmail);
 				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
 			}
 			return currentUser;
 		} else {
 			if (userByNewEmail != null) {
+				LOGGER.error(EMAIL_ALREADY_EXISTS + newEmail);
 				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
 			}
 			return null;
@@ -368,15 +382,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User updateUser(Long id,String firstName, String phoneNumber, String addressLine1, List<Shop> shopList,
-			Role roleObject, String remarks) throws UserNotFoundException {
-		System.out.println(remarks);
+			Role roleObject, String remarks) throws Exception {
+		
+		
 		User userFromDataBase = findUserById(id);
 		
 		if(userFromDataBase == null)
 		{
+			LOGGER.error(NO_USER_FOUND_BY_ID + id);
 			throw new UsernameNotFoundException(NO_USER_FOUND_BY_ID + id);
 		}
-		
+		try {
 		List<Shop> selectedShop = new ArrayList<Shop>();
 		//All Parent Shopes
 		List<Shop> allShopOfParentUser = shopService.getAllShopByParentUserId(userFromDataBase.getParentUserId());
@@ -401,12 +417,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 		//Updating User
 		return userRepository.save(userFromDataBase);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception Occured "+e.getMessage());
+			throw new Exception();
+		}
 	}
 
 	@Override
 	public boolean updateDefaultShop(Shop shop) {
 		User logInUser = authendicationFacade.getCurrentUserDetails();		
-		try {			
+		try {	
+			LOGGER.info("Try to update default shop for user :: "+logInUser.getId()+" || Shop Id :: "+shop.getShopId());
 			Shop selectShop = null;			
 			List<Shop> shops = shopService.getAllShopByParentUserId(logInUser.getId());
 			
@@ -418,13 +440,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				}
 			}
 			
-			if (selectShop != null) {
+			if (selectShop != null) {				
 				userRepository.updateDefaultShopId(selectShop.getShopId(), logInUser.getId());
+				LOGGER.info("Sucessfully update default shop for user :: "+logInUser.getId()+" || Shop Id :: "+selectShop.getShopId());
 				return true;
 			}
-			else 
+			else { 
+				LOGGER.error("Shop Id "+shop.getShopId()+" Not Matches Found For User "+logInUser.getId());
 				throw new BadCredentialsException("Tecnical Error Occured");
-		} catch (Exception ex) {			
+			}
+		} catch (Exception ex) {
+			LOGGER.error("Exception Occured Ex-Message"+ ex.getMessage());
 			throw new BadCredentialsException("Tecnical Error Occured");			
 		}
 	}
@@ -451,7 +477,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return true;
 		}
 		else {
-			System.out.println(" Invalid otp");
 			 throw new BadCredentialsException("Invalid OTP");
 		}
 	}
@@ -479,7 +504,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public boolean haveNewMail() {
 		String logInUserName = authendicationFacade.getCurrentUserName();
-		System.out.println(logInUserName);
 		return userRepository.haveNewMail(logInUserName);
 	}
 	

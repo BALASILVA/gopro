@@ -41,6 +41,9 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
 	@Modifying
 	@Query(value = "update shop set shopName=:shopName,phone=:phone,email=:email ,addressLineOne=:addressLineOne where shopId = :shopId AND userId = :parentUserId", nativeQuery = true)
 	int updateShopDetail(@Param(value = "shopName")String shopName,@Param(value = "phone") String phone,@Param(value = "email") String email,@Param(value = "addressLineOne") String addressLineOne,@Param(value="shopId")Long shopId,@Param(value="parentUserId") Long parentUserId );
+
+	@Query(value = "select shopName FROM   shop where shopid=:shopId", nativeQuery = true)
+	String findShopNameById(@Param(value = "shopId")Long defaultShopId);
 	
 	
 	

@@ -1,9 +1,11 @@
 package com.gopro.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +41,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	private InvoiceRepo invoiceRepo;
 	private AuthendicationFacade authendicationFacade;
 	private UserService userService;
+	private ShopService shopService;
 	private InvoiceProductService invoiceProductService;
 	private CustomerService customerService;
 	private NotificationService notificationService;
@@ -49,11 +52,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Autowired
 	public InvoiceServiceImpl(InvoiceRepo invoiceRepo, @Lazy AuthendicationFacade authendicationFacade,
-			UserService userService, InvoiceProductService invoiceProductService, CustomerService customerService,
+			UserService userService,ShopService shopService , InvoiceProductService invoiceProductService, CustomerService customerService,
 			NotificationService notificationService, CommanService commanService) {
 		this.invoiceRepo = invoiceRepo;
 		this.authendicationFacade = authendicationFacade;
 		this.userService = userService;
+		this.shopService = shopService;
 		this.invoiceProductService = invoiceProductService;
 		this.customerService = customerService;
 		this.notificationService = notificationService;
@@ -99,10 +103,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 
 	@Override
-	public Invoice getInvoiceDetailById(Invoice invoice) {
-		List<InvoiceProductMap> productList = invoiceProductService.getInvoiceDetailByInvoiceId(invoice.getInvoiceId());
-		invoice.setInvoiceProductMap(productList);
-		return invoice;
+	public Invoice getInvoiceDetailById(Invoice invoice) throws Exception {
+		//List<InvoiceProductMap> productList = invoiceProductService.getInvoiceDetailByInvoiceId(invoice.getInvoiceId());
+		//invoice.setInvoiceProductMap(productList);
+		Optional<Invoice> invoiceFromDb = invoiceRepo.findById(invoice.getInvoiceId());
+		System.out.println(invoice);
+		System.out.println(invoiceFromDb);
+		return invoiceFromDb.orElseThrow(Exception::new);
 	}
 
 	@Override
@@ -156,6 +163,24 @@ public class InvoiceServiceImpl implements InvoiceService {
 					searchCredentialDTO.getSendFrom(),
 					pageable);
 			
+			if(res.getTotalElements()>0) 
+			if(res.getSize()>0) {			
+				Long totalPrice = invoiceRepo.findSumAllOfInvoice(searchCredentialDTO.getInvoiceId(),
+						searchCredentialDTO.getCustomerMobileNo(),
+						searchCredentialDTO.getNoOfProduct() == 0 ? null : (long) searchCredentialDTO.getDefaultShopId(),
+						searchCredentialDTO.getStartPrice(),
+						searchCredentialDTO.getEndPrice(),					
+						searchCredentialDTO.getFromDate(), 
+						searchCredentialDTO.getToDate() == null ? null : commanService.maximiumTimeOfDate(searchCredentialDTO.getToDate()),					
+						searchCredentialDTO.getPaymentType(),
+						searchCredentialDTO.getSearchKeyWord(),
+						searchCredentialDTO.getDefaultShopId() == 0 ? null : searchCredentialDTO.getDefaultShopId(),
+						searchCredentialDTO.getSendFrom());
+					for (Invoice invoice : res) {
+						invoice.setTotalPriceBulkInvoice(totalPrice);
+					}
+			}
+			
 			return res;
 		} catch (Exception ex) {
 			System.out.println(ex);
@@ -166,27 +191,29 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Override
 	public Invoice sendReprintNotification(Invoice invoice) {
-		System.out.println("In inv service sendReprintNotification");
 		Notification notification = notificationService.sendReprintNotification(invoice);
-		System.out.println("out inv service sendReprintNotification");
 		return invoice;
 	}
 
 	@Override
+	@Transactional
 	public DashBoard getDefaultShopTodaySales(SearchCredentialDTO searchCredentialDTO) {
 		User user = authendicationFacade.getCurrentUserDetails();
 		DashBoard dashBoard = new DashBoard();
 		
 		Long todaySale = invoiceRepo.getDefaultShopTodaySales(user.getDefaultShopId(), commanService.minimumTimeOfDate(new Date()));
+		String shopName = shopService.getShopNameById(user.getDefaultShopId());
 		
 		if(todaySale == null)
 			todaySale = 0L;
 		
 		dashBoard.setDefaultShopTotalSales(todaySale);
+		dashBoard.setShopName(shopName);
 		return dashBoard;
 	}
 
 	@Override
+	@Transactional
 	public DashBoard getUserAllShopTodaySales(SearchCredentialDTO searchCredentialDTO) {
 		User user = authendicationFacade.getCurrentUserDetails();
 		DashBoard dashBoard = new DashBoard();
@@ -207,6 +234,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 
 	@Override
+	@Transactional
 	public DashBoard getDefaultShopSalesList(SearchCredentialDTO searchCredentialDTO) {
 		
 		User user = authendicationFacade.getCurrentUserDetails();
@@ -216,17 +244,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 		DashBoard dashBoard = new DashBoard();
 		
 		Date oneWeekBeforeDate = commanService.oneWeekBeforeDate(new Date());
-		System.out.println(new Date());
-		System.out.println(oneWeekBeforeDate);
-		salesListWeek = invoiceRepo.getDefaultShopSalesListByWeek(user.getDefaultShopId(),oneWeekBeforeDate);
 		
+		salesListWeek = invoiceRepo.getDefaultShopSalesListByWeek(user.getDefaultShopId(),oneWeekBeforeDate);
+				
 		if(salesListWeek.size() != 7)
 			salesListWeek = addMissingDate(salesListWeek,oneWeekBeforeDate);
-			
-		Date oneYearBeforeDate = commanService.oneMounthBeforeDate(new Date());
-			salesListMounth = invoiceRepo.getDefaultShopSalesListByMounth(user.getDefaultShopId(),oneYearBeforeDate);
 		
+		Date oneYearBeforeDate = commanService.oneMounthBeforeDate(new Date());
 		System.out.println(oneYearBeforeDate);
+		salesListMounth = invoiceRepo.getDefaultShopSalesListByMounth(user.getDefaultShopId(),oneYearBeforeDate);
+		System.out.println(salesListMounth);
 		if(salesListMounth.size() != 12)
 			salesListMounth = addMissingMouth(salesListMounth,oneYearBeforeDate);
 		
@@ -236,17 +263,49 @@ public class InvoiceServiceImpl implements InvoiceService {
 		return dashBoard;
 	}
 
-	private List<Invoice> addMissingMouth(List<Invoice> salesListMounth, Date oneMounthBeforeDate) {
-		
-		return null;
+	private List<Invoice> addMissingMouth(List<Invoice> salesListYear, Date oneYearBeforeDate) {
+		System.out.println("oneYearBeforeDate :: "+ oneYearBeforeDate);
+		for(int i=0;i<12;i++) {
+			boolean isPresent = false;
+			for (Invoice obj : salesListYear) {				
+				if(obj.getDate().getMonth() == oneYearBeforeDate.getMonth()) {
+					int date = obj.getDate().getDate();
+					int month = obj.getDate().getMonth();
+					int year = obj.getDate().getYear();
+					Date dateTemp = new Date();
+					dateTemp.setDate(date);
+					dateTemp.setMonth(month);
+					dateTemp.setYear(year);
+					obj.setDate(dateTemp);
+					isPresent  = true;
+					break;
+				}
+			}
+			if(!isPresent)
+			{
+				Invoice invoice = new Invoice();
+				invoice.setTotalPrice(0D);
+				invoice.setDate(oneYearBeforeDate);				
+				salesListYear.add(i,invoice);
+			}
+			oneYearBeforeDate = commanService.incrementMounth(oneYearBeforeDate, 1);
+		}
+		return salesListYear;
 	}
 
 	private List<Invoice> addMissingDate(List<Invoice> salesListWeek, Date oneWeekBeforeDate) {
-		System.out.println(salesListWeek);
 		for(int i=0;i<7;i++) {
 			boolean isPresent = false;
 			for (Invoice obj : salesListWeek) {				
 				if(obj.getDate().getDate() == oneWeekBeforeDate.getDate()) {
+					int date = obj.getDate().getDate();
+					int month = obj.getDate().getMonth();
+					int year = obj.getDate().getYear();
+					Date dateTemp = new Date();
+					dateTemp.setDate(date);
+					dateTemp.setMonth(month);
+					dateTemp.setYear(year);
+					obj.setDate(dateTemp);
 					isPresent  = true;
 					break;
 				}
@@ -256,8 +315,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 				Invoice invoice = new Invoice();
 				invoice.setTotalPrice(0D);
 				invoice.setDate(oneWeekBeforeDate);
-				System.out.println(oneWeekBeforeDate+"1"+i);
-				salesListWeek.add(i, invoice);
+				System.out.println("IN " +oneWeekBeforeDate+"=="+i);
+				salesListWeek.add(i,invoice);
 			}
 			oneWeekBeforeDate = commanService.incrementDate(oneWeekBeforeDate, 1);
 		}

@@ -1,0 +1,23 @@
+SELECT notif.notificationId, notif.notificationType, notif.Subject, notif.notificationLatUpdateDate, notif.notificationStartData 
+FROM   Notification notif 
+INNER JOIN NotificationMessageMap notmes on notif.notificationId = notmes.notificationId 
+INNER JOIN NotificationUserMap notusr on ( notusr.notificationMessageMapId = notmes.notificationMessageMapId AND notusr.isDeleted <> 1 ) 
+INNER JOIN User usr on notusr.sendTo = usr.id 
+WHERE  notusr.sendTo = :logInUser 
+AND notmes.sendFrom = Ifnull(:sendFrom, notmes.sendFrom) 
+AND notusr.sendTo = Ifnull(:sendTo, notusr.sendTo) 
+AND ( ( notmes.time >= :fromDate OR :fromDate IS NULL ) 
+AND ( notmes.time <= :toDate OR :toDate IS NULL ) ) 
+AND Concat_ws(usr.firstName,usr.lastName,notif.Subject, notmes.message, notmes.time) 
+LIKE :searchKeyWord group  by notif.notificationId 
+order  by notif.notificationLatUpdateDate desc
+
+
+	{ path: '', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule) ,
+			      children: [
+				        {
+				          path: 'compose',
+				          component: ComposeComponent
+	        			}
+      				]		
+    },	
